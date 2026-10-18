@@ -5,14 +5,19 @@
 #include <SFML/Window/VideoMode.hpp>
 //#include <SFML/Graphics.hpp>
 
+#include "type_render_data.h"
+
 class Renderer{
 private:
     sf::RenderWindow window_;//窗口事件
+    RenderData renderData_;
+
+    void renderTEST();
 
 public:
     Renderer(unsigned int logicW = 1920, unsigned int logicH = 1080);//构造函数，创建窗口
 
-    void render();
+    void render(const RenderData& renderData);
     void onEnter();
     void onExit();
 

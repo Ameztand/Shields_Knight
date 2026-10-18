@@ -14,20 +14,18 @@ namespace sf { class RenderWindow; class Event; }
 class Input : public IInputLayer{
 private:
     static constexpr int KEY_COUNT = static_cast<int>(sf::Keyboard::KeyCount);//101个按键
+    static constexpr int COUNT = KEY_COUNT + 1 ;//最后一个是鼠标左键
 
     //帧快照-原始数据
-    std::array<bool,KEY_COUNT> rawKeys_ = {};
+    std::array<bool, COUNT> rawKeys_ = {};
     sf::Vector2i rawMousePos_ = {};//保持原始数据
-    bool rawMouseL_ = false;
 
-    std::array<bool, KEY_COUNT> prevKeys_ = {};//上一帧按下情况
-    std::array<std::chrono::steady_clock::time_point, KEY_COUNT> pressTime_ = {};// 按下时间戳
-    //bool prevMouseL_ = false;
+    std::array<bool, COUNT> prevKeys_ = {};//上一帧按下情况
+    std::array<std::chrono::steady_clock::time_point, COUNT> pressTime_ = {};// 按下时间戳
 
     //帧快照-加工数据
-    std::array<IInputLayer::KeySta,  KEY_COUNT> keySta_ = {};
-    //Position mousePos_ = {};
-    bool mouseStaL_ = false;
+    std::array<IInputLayer::KeySta, COUNT> keySta_ = {};
+    //Position mousePos_ = Epos;
     
     IInputLayer::MsgData msgData;//输出数据
     sf::RenderWindow& window_;//窗口事件

@@ -25,11 +25,11 @@ void Input::onEvent(const sf::Event &event)
     }
     else if (const auto* mousePressed = event.getIf<sf::Event::MouseButtonPressed>())//鼠标左键按下
     {
-        if (mousePressed->button == sf::Mouse::Button::Left)rawMouseL_ = true;
+        if (mousePressed->button == sf::Mouse::Button::Left)rawKeys_[COUNT - 1] = true;
     }
     else if (const auto* mouseReleased = event.getIf<sf::Event::MouseButtonReleased>())//鼠标左键抬起
     {
-        if (mouseReleased->button == sf::Mouse::Button::Left)rawMouseL_ = false;
+        if (mouseReleased->button == sf::Mouse::Button::Left)rawKeys_[COUNT - 1] = false;
     }
     else if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>())//鼠标移动
     {
@@ -38,7 +38,7 @@ void Input::onEvent(const sf::Event &event)
     else if (event.is<sf::Event::FocusLost>())//失焦
     {
         rawKeys_.fill(false);
-        rawMouseL_ = false;
+        //rawKeys_[COUNT - 1] = false;
     }
 }
 
@@ -46,8 +46,8 @@ void Input::translate()
 {
     auto now = std::chrono::steady_clock::now();
 
-    //键盘
-    for (int i = 0; i < KEY_COUNT; ++i)
+    //键盘+鼠标
+    for (int i = 0; i < COUNT; ++i)
     {
         bool curr = rawKeys_[i];
         bool prev = prevKeys_[i];
@@ -82,7 +82,7 @@ void Input::translate()
         prevKeys_[i] = curr; //保存当前状态?
     }
 
-    //鼠标
+    //鼠标坐标
     //mousePos_.x = rawMousePos_.x;
     //mousePos_.y = rawMousePos_.y;
 }
@@ -99,7 +99,7 @@ void Input::updateMsgData()
     msgData.F1  = getSta(sf::Keyboard::Key::F1);
     msgData.Alt = getSta(sf::Keyboard::Key::LAlt);//单左alt
 
-    msgData.isMouseF = mouseStaL_;//input.mouseLogicPos = {0.f, 0.f};还没有映射成逻辑坐标
+    msgData.isMouseF = rawKeys_[COUNT - 1];//input.mouseLogicPos = {0.f, 0.f};还没有映射成逻辑坐标
     //msgData.MousePos = mousePos_;
     msgData.MousePos = {rawMousePos_.x, rawMousePos_.y};
 }

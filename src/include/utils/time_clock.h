@@ -8,9 +8,9 @@ private:
 public:
     TimeClock() { reset(); }//包含入场onEnter
 
-    double now() const {
+    double now() const {//返回毫秒
         auto now = std::chrono::steady_clock::now();
-        return std::chrono::duration<double>(now - start_).count();
+        return std::chrono::duration<double, std::milli>(now - start_).count();
     }
 
     void reset() {
