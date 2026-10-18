@@ -1,6 +1,6 @@
 #pragma once  // 防止重复包含
 
-#include "common.h"
+#include "../include/common.h"
 
 class IInputLayer{
 public:

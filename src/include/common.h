@@ -27,14 +27,41 @@ struct Position {
 //单位坐标(-1,-1)
 inline constexpr Position Epos{-1, -1};
 
-//默认棋盘ID表（初始化）白色在下
-inline constexpr std::array<std::array<int, 8>, 8> EpieceID = {{
-    {{ -5, -4, -3, -2, -1, -3, -4, -5 }},
-    {{ -6, -6, -6, -6, -6, -6, -6, -6 }},
-    {{ 0, 0, 0, 0, 0, 0, 0, 0 }},
-    {{ 0, 0, 0, 0, 0, 0, 0, 0 }},
-    {{ 0, 0, 0, 0, 0, 0, 0, 0 }},
-    {{ 0, 0, 0, 0, 0, 0, 0, 0 }},
-    {{ 6, 6, 6, 6, 6, 6, 6, 6 }},
-    {{ 5, 4, 3, 2, 1, 3, 4, 5 }}
-}};
+// ========== 区域 ==========
+struct Rect {
+    //再也不敢const了哭哭哭
+    Position pos = Epos;//左上角坐标
+    int width = 0;
+    int height = 0;                      
+
+    // 唯一构造入口，必须传参(左上角坐标，宽，高)
+    constexpr Rect(Position pos_, int width_, int height_)
+        : pos{pos_}, width{width_}, height{height_} {}
+
+    // 边界
+    constexpr int left()   const { return pos.x; }
+    constexpr int top()    const { return pos.y; }
+    constexpr int right()  const { return left() + width;  }
+    constexpr int bottom() const { return top()  + height; }
+
+    // 点是否在区域内（左上闭、右下开，避免相邻矩形重复命中）
+    constexpr bool contains(const Position& pos) const {
+        return pos.x >= left() && pos.x < right()
+            && pos.y >= top()  && pos.y < bottom();
+    }
+
+    // 两个矩形是否相交（AABB 碰撞检测）
+    constexpr bool intersects(const Rect& o) const {
+        return !(right() <= o.left() || o.right() <= left()
+              || bottom() <= o.top()  || o.bottom() <= top());
+    }
+
+    constexpr bool operator==(const Rect& o) const {
+        return left() == o.left() && top() == o.top()
+            && width == o.width && height == o.height;
+    }
+    constexpr bool operator!=(const Rect& o) const { return !(*this == o); }
+};
+
+//单位区域(-1,-1)
+inline constexpr Rect Erect{Epos, 0, 0};
