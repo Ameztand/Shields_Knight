@@ -130,4 +130,4 @@ src/
 
 ## 仓库
 
-Remote 目前仍指向旧名 `Chess_Ref_with_SFML`，迁移到 `Shields_Knight` 尚未完成。
+Remote 成功迁移到 `Shields_Knight` 。
