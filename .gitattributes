@@ -1,0 +1,10 @@
+* text=auto
+
+*.md    text
+*.h     text
+*.cpp   text
+*.json  text
+*.txt   text
+
+*.png   binary
+*.exe   binary

@@ -38,7 +38,7 @@ void Renderer::renderTEST()
 }
 
 Renderer::Renderer(unsigned int logicW, unsigned int logicH)
-    : window_(sf::VideoMode({logicW, logicH}), "Genshen??",
+    : window_(sf::VideoMode({logicW, logicH}), "Shields_Knight",
               sf::Style::Titlebar | sf::Style::Close)
 {
     window_.setFramerateLimit(60);
