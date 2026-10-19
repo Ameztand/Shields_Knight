@@ -1,0 +1,26 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "mingw",
+      "displayName": "MinGW g++ 14.2 + SFML 3.1.0 (Release with -g)",
+      "description": "全部机器相关路径集中在这里，换电脑只改这个文件",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "D:/vsCodeTools/mingw64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "D:/vsCodeTools/mingw64/bin/mingw32-make.exe",
+        "CMAKE_PREFIX_PATH": "D:/vsCodeTools/SFML-3.1.0"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "mingw",
+      "configurePreset": "mingw",
+      "jobs": 8
+    }
+  ]
+}
