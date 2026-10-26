@@ -22,7 +22,7 @@ public:
 
     void deleteButtons(const IGameState::GameSta nowSta);
 
-    const std::array<std::vector<Button>, kStateCount>& commitRenderData();
+    const std::array<std::vector<Button>, kStateCount>& commitButtons();
 
     void tick(Data& data, const IGameState::GameSta nowSta);
 

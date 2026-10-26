@@ -3,11 +3,31 @@
   "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
   "configurePresets": [
     {
+      "name": "msvc",
+      "displayName": "MSVC v143 x64 + SFML(vc17包) -> build/msvc   [VS 2022 用这个]",
+      "description": "Ninja + MSVC，环境由 Visual Studio 自动注入（architecture.strategy=external）。放在第一位：VS 打开文件夹时默认选第一个预设。",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/msvc",
+      "architecture": { "value": "x64", "strategy": "external" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_PREFIX_PATH": "D:/vsCodeTools/SFML-3.1.0-MSVC/SFML-3.1.0"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-msvc-x64",
+          "intelliSenseOptions": {
+            "additionalCompilerArgs": [ "/std:c++17" ]
+          }
+        }
+      }
+    },
+    {
       "name": "mingw",
-      "displayName": "MinGW g++ 14.2 + SFML 3.1.0 (Release with -g)",
       "description": "全部机器相关路径集中在这里，换电脑只改这个文件",
+      "displayName": "⚠ MinGW g++（仅 VS Code / 命令行，VS2022 里请勿选）",
       "generator": "MinGW Makefiles",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build/mingw",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_COMPILER": "D:/vsCodeTools/mingw64/bin/g++.exe",
@@ -17,6 +37,11 @@
     }
   ],
   "buildPresets": [
+    {
+      "name": "msvc",
+      "configurePreset": "msvc",
+      "jobs": 8
+    },
     {
       "name": "mingw",
       "configurePreset": "mingw",

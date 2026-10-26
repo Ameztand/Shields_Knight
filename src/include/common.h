@@ -28,6 +28,7 @@ struct Position {
 inline constexpr Position Epos{-1, -1};
 
 // ========== 区域 ==========
+//传参(左上角坐标，宽，高)
 struct Rect {
     //再也不敢const了哭哭哭
     Position pos = Epos;//左上角坐标

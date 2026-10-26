@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "cmake: build (mingw)",
+      "type": "process",
+      "command": "D:/vsCodeTools/cmake-4.4.4-windows-x86_64/bin/cmake.exe",
+      "args": ["--build", "--preset", "mingw"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": ["$gcc"],
+      "group": { "kind": "build", "isDefault": true },
+      "detail": "等价于 F7；用的是 CMake 预设"
+    }
+  ]
+}

@@ -14,9 +14,17 @@ Debug/
 Release/
 
 # 3. 忽略 VSCode 的个人配置 (如果只有你一个人写，建议忽略；如果团队共享配置则保留)
-.vscode/
+.vs/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+
 
 # 4. 忽略系统自动生成的垃圾文件
 .DS_Store
 Thumbs.db
 *.log
+
+# 5. 忽略部分美术资源
+pic/test*.png

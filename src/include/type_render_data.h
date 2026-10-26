@@ -8,5 +8,9 @@
 #include <vector>
 
 struct RenderData{
-    std::vector<Button> buttons;//所有按钮
+    std::array<std::vector<Button>, kStateCount> buttons_;//全部按钮
+    std::vector<IGameState::GameSta> gameSta_;//当前状态
+    int gameStaDepth_ = 0;
+
+    bool debugPanel_ = false;
 };

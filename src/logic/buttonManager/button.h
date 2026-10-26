@@ -13,7 +13,7 @@ struct ButtonConfig {
 };
 
 struct Button{
-    ButtonConfig statu;
+    ButtonConfig status;
 
     bool isClicked = false;//点击（短按）//下降沿
 	bool isHovered = false;//悬停
@@ -27,5 +27,5 @@ struct Button{
     Button() = default;
 
     // 【新增】接收配置的构造函数
-    Button(const ButtonConfig& config) : statu(config) {}
+    explicit Button(const ButtonConfig& config) : status(config) {}
 };

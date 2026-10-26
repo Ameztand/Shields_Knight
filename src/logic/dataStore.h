@@ -86,6 +86,7 @@ public:
 	//按钮
 	void updataButtonSta(const std::array<std::vector<Button>, kStateCount>& buttons) { buttons_ = buttons; }
 	const std::vector<Button>& getButtonOf(const IGameState::GameSta sta) const { return buttons_[static_cast<size_t>(sta)]; }
+	//const std::array<std::vector<Button>, kStateCount>& getButtonAll() const { return buttons_; }
 
 	//Debug
 	void updateDebug(const IInputLayer::KeySta out){ F1_.update(out); }
