@@ -16,7 +16,7 @@ void ButtonManager::deleteButtons(const IGameState::GameSta nowSta)
     buttons[(size_t)nowSta].clear();
 }
 
-const std::array<std::vector<Button>, kStateCount> &ButtonManager::commitRenderData()
+const std::array<std::vector<Button>, kStateCount> &ButtonManager::commitButtons()
 {
     return buttons;
 }
@@ -27,7 +27,7 @@ void ButtonManager::tick(Data& data, const IGameState::GameSta nowSta){
     auto& vec = buttons[sta];
     for (auto& btn : vec) {
         //检查悬停
-        bool tempHoveredSta = btn.statu.area.contains(data.getMsgData().MousePos);
+        bool tempHoveredSta = btn.status.area.contains(data.getMsgData().MousePos);
         if(tempHoveredSta){
             if(btn.isHovered){
                 //悬停中
@@ -46,7 +46,7 @@ void ButtonManager::tick(Data& data, const IGameState::GameSta nowSta){
         btn.isHovered = tempHoveredSta;
 
         //检查按下
-        btn.isClicked = btn.isHovered && data.getMsgData().isMouseF;
+        btn.isClicked = btn.isHovered && (data.getMsgData().MouseL == IInputLayer::KeySta::Falling);
     }
 }
 

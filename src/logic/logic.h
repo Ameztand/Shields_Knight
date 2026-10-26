@@ -17,7 +17,7 @@ private:
 	State gameSta;
 	
 
-	RenderData renderData;
+	//RenderData renderData;
 
 	void onEnter();
 	void translateMsg();
@@ -35,7 +35,12 @@ public:
 
 	void tick(const IInputLayer::MsgData& out, const double now);
 
-	const RenderData& commitRenderData();
+	RenderData commitRenderData();//不要加const，为什么？
 
 	bool Exit();
+
+	//析构调用状态机的onExit//要结合拷贝构造？
+	//~Logic() {
+    //	while (!gameSta.empty()) gameSta.popSta(data);   // 保证每个状态都走一次 onExit
+	//}
 };

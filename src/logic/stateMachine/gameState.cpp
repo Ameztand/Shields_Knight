@@ -43,7 +43,7 @@ void Lobby::tick(Data& data)
     for (const auto& btn : data.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
-        switch (btn.statu.ID) {
+        switch (btn.status.ID) {
             case ButtonID::lobbystartButton:
                 //选择难度
                 data.gameIntend.replaceSelect = true;
@@ -80,7 +80,7 @@ void Select::tick(Data& data)
     for (const auto& btn : data.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
-        switch (btn.statu.ID) {
+        switch (btn.status.ID) {
             case ButtonID::selectRightButton:
                 //进入PU
                 data.gameIntend.replacePuGame = true;
@@ -97,7 +97,7 @@ IGameState::GameSta Select::getID() const
 
 void PuGame::onEnter(Data& data)
 {
-    data.gameIntend.initGameData = true;
+    //data.gameIntend.initGameData = true;
 }
 
 void PuGame::onExit(Data& data)
@@ -138,7 +138,7 @@ void Pause::tick(Data& data)
     for (const auto& btn : data.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
-        switch (btn.statu.ID) {
+        switch (btn.status.ID) {
             case ButtonID::pauseLeftButton:
                 //继续游戏
                 data.gameIntend.popSta = true;

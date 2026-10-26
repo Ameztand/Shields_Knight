@@ -1,48 +1,13 @@
 #include "input.h"
 
-#include "config.h"
-
-#include <SFML/Graphics/RenderWindow.hpp>
+//#include <SFML/Graphics/RenderWindow.hpp>//???
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
 //构造链接
-Input::Input(sf::RenderWindow& window)
-    : window_(window)
-{}
+//Input::Input(){}
 
-void Input::onEvent(const sf::Event &event)
-{
-    //写入帧快照
-    if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) {//按下
-        int code = static_cast<int>(keyPressed->code);
-        if (code >= 0 && code < KEY_COUNT)rawKeys_[code] = true;
-    }
-    else if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())//抬起
-    {
-        int code = static_cast<int>(keyReleased->code);
-        if (code >= 0 && code < KEY_COUNT)rawKeys_[code] = false;
-    }
-    else if (const auto* mousePressed = event.getIf<sf::Event::MouseButtonPressed>())//鼠标左键按下
-    {
-        if (mousePressed->button == sf::Mouse::Button::Left)rawKeys_[COUNT - 1] = true;
-    }
-    else if (const auto* mouseReleased = event.getIf<sf::Event::MouseButtonReleased>())//鼠标左键抬起
-    {
-        if (mouseReleased->button == sf::Mouse::Button::Left)rawKeys_[COUNT - 1] = false;
-    }
-    else if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>())//鼠标移动
-    {
-        rawMousePos_ = mouseMoved->position;//保持原始数据
-    }
-    else if (event.is<sf::Event::FocusLost>())//失焦
-    {
-        rawKeys_.fill(false);
-        //rawKeys_[COUNT - 1] = false;
-    }
-}
-
-void Input::translate()
+void Input::translate(const Screen& screen, std::optional<sf::Vector2i> mousePos)
 {
     auto now = std::chrono::steady_clock::now();
 
@@ -85,6 +50,19 @@ void Input::translate()
     //鼠标坐标
     //mousePos_.x = rawMousePos_.x;
     //mousePos_.y = rawMousePos_.y;
+    //鼠标坐标映射
+    //const sf::Vector2f world = screen.toDesign(window_);// 每帧取真实像素+映射
+    //mousePos_.x = static_cast<int>(world.x);
+    //mousePos_.y = static_cast<int>(world.y);
+    // 鼠标坐标：拆盒 + 换算
+    if (mousePos) {
+        rawMousePos_ = *mousePos;
+        const sf::Vector2f world = screen.toDesign(rawMousePos_);
+        mousePos_.x = static_cast<int>(world.x);
+        mousePos_.y = static_cast<int>(world.y);
+    } else {
+        mousePos_ = Epos;        // 没有有效位置 → 谁都不悬停
+    }
 }
 
 void Input::updateMsgData()
@@ -99,23 +77,47 @@ void Input::updateMsgData()
     msgData.F1  = getSta(sf::Keyboard::Key::F1);
     msgData.Alt = getSta(sf::Keyboard::Key::LAlt);//单左alt
 
-    msgData.isMouseF = rawKeys_[COUNT - 1];//input.mouseLogicPos = {0.f, 0.f};还没有映射成逻辑坐标
-    //msgData.MousePos = mousePos_;
-    msgData.MousePos = {rawMousePos_.x, rawMousePos_.y};
+    msgData.MouseL  = keySta_[COUNT - 1];
+    msgData.MousePos = mousePos_;
 }
 
-void Input::poll()
+void Input::HandleEvent(const Screen& screen, std::optional<sf::Vector2i> mousePos)
 {
-    while (const auto event = window_.pollEvent()) {
-        if (event->is<sf::Event::Closed>()) 
-        { 
-            window_.close(); 
-            continue; 
-        }
-        onEvent(*event);
-    }
-    translate();
+    translate(screen, mousePos);
     updateMsgData();
+}
+
+void Input::onEvent(const sf::Event &event)
+{
+    //写入帧快照
+    if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) {//按下
+        int code = static_cast<int>(keyPressed->code);
+        if (code >= 0 && code < KEY_COUNT)rawKeys_[code] = true;
+    }
+    else if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())//抬起
+    {
+        int code = static_cast<int>(keyReleased->code);
+        if (code >= 0 && code < KEY_COUNT)rawKeys_[code] = false;
+    }
+    else if (const auto* mousePressed = event.getIf<sf::Event::MouseButtonPressed>())//鼠标左键按下
+    {
+        if (mousePressed->button == sf::Mouse::Button::Left)rawKeys_[COUNT - 1] = true;
+    }
+    else if (const auto* mouseReleased = event.getIf<sf::Event::MouseButtonReleased>())//鼠标左键抬起
+    {
+        if (mouseReleased->button == sf::Mouse::Button::Left)rawKeys_[COUNT - 1] = false;
+    }
+    //else if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>())//鼠标移动
+    //{
+        //rawMousePos_ = mouseMoved->position;//保持原始数据
+        //rawMousePos_ = sf::Mouse::getPosition(window_);        // 每帧取真实像素
+        //查看dsh
+    //}
+    else if (event.is<sf::Event::FocusLost>())//失焦
+    {
+        rawKeys_.fill(false);
+        //rawKeys_[COUNT - 1] = false;
+    }
 }
 
 const IInputLayer::MsgData &Input::getMsgData() const

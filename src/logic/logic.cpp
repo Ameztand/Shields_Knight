@@ -14,12 +14,12 @@ void Logic::onEnter()
 
 void Logic::translateMsg()
 {
-	const IInputLayer::MsgData& out = data.getMsgData();
+	//const IInputLayer::MsgData& out = data.getMsgData();
 	using KeySta = IInputLayer::KeySta;
 	
 	//data.gameIntend.isEsc = (out.Esc == KeySta::falling);
-	data.updateDebug(out.F1);
-	data.updateAlt(out.Alt);
+	data.updateDebug(data.getMsgData().F1);
+	data.updateAlt(data.getMsgData().Alt);
 	//printf("%d\n", data.getBout());
 }
 
@@ -32,7 +32,7 @@ void Logic::regCurButtons() {
 }
 
 void Logic::replaceSta(std::unique_ptr<IGameState> sta) {
-	popSta();//先退出暂停状态
+	if(gameSta.getStaID() == IGameState::GameSta::Pause)popSta();//先退出暂停状态
 
     delCurButtons();
     gameSta.replaceSta(data, std::move(sta));
@@ -86,7 +86,7 @@ void Logic::tick(const IInputLayer::MsgData& out, const double now)
 	translateMsg();
 
 	buttonManager.tick(data, gameSta.getStaID());//按钮输入
-	data.updataButtonSta(buttonManager.commitRenderData());//按键输入写入黑板
+	data.updataButtonSta(buttonManager.commitButtons());//按键输入写入黑板,方便状态机获取
 
 	gameSta.getState()->tick(data);
 
@@ -96,11 +96,19 @@ void Logic::tick(const IInputLayer::MsgData& out, const double now)
 	//数据清理
 	if (data.gameIntend.initGameData)data.initGameData();
 	if (data.gameIntend.initALLData)data.initData();
-
+	clearIntend();
 }
 
-const RenderData &Logic::commitRenderData()
+RenderData Logic::commitRenderData()
 {
+	RenderData renderData;
+
+	renderData.buttons_ = buttonManager.commitButtons();
+	renderData.gameSta_ = gameSta.getStaStack();
+	renderData.gameStaDepth_ = gameSta.getStaDepth();
+
+	renderData.debugPanel_ = data.getDebug();
+
     return renderData;
 }
 

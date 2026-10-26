@@ -5,24 +5,26 @@
 #include <SFML/Window/VideoMode.hpp>
 //#include <SFML/Graphics.hpp>
 
-#include "type_render_data.h"
+#include "../include/type_render_data.h"
+#include "../include/screen.h"
+
 
 class Renderer{
 private:
-    sf::RenderWindow window_;//窗口事件
-    RenderData renderData_;
+    //渲染
+    //RenderData renderData_;//删掉，传参限制生命周期
 
-    void renderTEST();
+    void renderSetView(sf::RenderWindow& window, const Screen& screen);
+    void renderTEST(sf::RenderWindow& window, const RenderData& renderData);
+    void renderBackground(sf::RenderWindow& window, const Screen& screen,const RenderData& renderData);
+    void renderButton(sf::RenderWindow& window, const RenderData& renderData);
+
 
 public:
-    Renderer(unsigned int logicW = 1920, unsigned int logicH = 1080);//构造函数，创建窗口
+    //Renderer();//构造函数，创建窗口
 
-    void render(const RenderData& renderData);
+    //渲染
+    void render(sf::RenderWindow& window, const Screen& screen, const RenderData& renderData);
     void onEnter();
     void onExit();
-
-    //控制器
-    bool isOpen() const { return window_.isOpen(); }
-    void close()      { window_.close(); }
-    sf::RenderWindow& getWindow() { return window_; }//不可以const
 };
