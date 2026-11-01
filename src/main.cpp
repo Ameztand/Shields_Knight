@@ -16,7 +16,7 @@ int main() {
 
     Renderer render;
     Input input;
-    TimeClock clock;//每进入对局状态一次重置？
+    TimeClock clock;
     Logic logic;
 
     render.onEnter();
@@ -38,6 +38,7 @@ int main() {
             window.close();
             break;
         }
+        //if (logic.resetTime())clock.reset();
 
         logic.tick(msgData, clock.now());
         render.render(window.target(), window.screen(), logic.commitRenderData());

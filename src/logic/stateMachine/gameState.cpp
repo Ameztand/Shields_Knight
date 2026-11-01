@@ -25,8 +25,7 @@ namespace HandleInput{
 
 void Lobby::onEnter(Data& data)
 {
-    //buttons.clear();
-    //buttons.emplace_back(lobbystartButton, ButtonID::lobbystartButton);
+    data.gameIntend.resetTime = true;
 }
 
 void Lobby::onExit(Data& data)

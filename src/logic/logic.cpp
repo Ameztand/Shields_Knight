@@ -83,10 +83,11 @@ void Logic::tick(const IInputLayer::MsgData& out, const double now)
 {
 	//获取数据写入黑板（还没写入时间）
 	data.pushMsgData(out);
+	data.updataNow(now);
 	translateMsg();
 
 	buttonManager.tick(data, gameSta.getStaID());//按钮输入
-	data.updataButtonSta(buttonManager.commitButtons());//按键输入写入黑板,方便状态机获取
+	data.updataButtonSta(buttonManager.commitButtons());//临时按键输入写入黑板,方便状态机获取
 
 	gameSta.getState()->tick(data);
 
@@ -115,4 +116,9 @@ RenderData Logic::commitRenderData()
 bool Logic::Exit()
 {
 	return gameSta.empty();
+}
+
+bool Logic::resetTime()
+{
+	return data.gameIntend.resetTime;
 }

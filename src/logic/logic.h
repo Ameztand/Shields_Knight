@@ -39,6 +39,8 @@ public:
 
 	bool Exit();
 
+	bool resetTime();
+
 	//析构调用状态机的onExit//要结合拷贝构造？
 	//~Logic() {
     //	while (!gameSta.empty()) gameSta.popSta(data);   // 保证每个状态都走一次 onExit
