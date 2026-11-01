@@ -89,7 +89,10 @@ void Logic::tick(const IInputLayer::MsgData& out, const double now)
 	buttonManager.tick(data, gameSta.getStaID());//按钮输入
 	data.updataButtonSta(buttonManager.commitButtons());//临时按键输入写入黑板,方便状态机获取
 
-	gameSta.getState()->tick(data);
+	if (auto* s = gameSta.getState()) {   // 空栈保护
+		StateContext ctx{ data };  // 有界上下文
+		s->tick(ctx);
+	}
 
 	//换栈
 	changeSta();

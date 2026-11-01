@@ -6,46 +6,46 @@
 
 
 namespace HandleInput{
-    bool EscPop(Data& data)
+    bool EscPop(Data& world)
     {
         using KeySta = IInputLayer::KeySta;
-        bool temp = (data.getMsgData().Esc == KeySta::Falling);
-        data.gameIntend.popSta = temp;
+        bool temp = (world.getMsgData().Esc == KeySta::Falling);
+        world.gameIntend.popSta = temp;
         return temp;
     }
 
-    bool EscPuase(Data& data)
+    bool EscPuase(Data& world)
     {
         using KeySta = IInputLayer::KeySta;
-        bool temp = (data.getMsgData().Esc == KeySta::Falling);
-        data.gameIntend.pushPause = temp;
+        bool temp = (world.getMsgData().Esc == KeySta::Falling);
+        world.gameIntend.pushPause = temp;
         return temp;
     }
 }
 
-void Lobby::onEnter(Data& data)
+void Lobby::onEnter(Data& world)
 {
-    data.gameIntend.resetTime = true;
+    world.gameIntend.resetTime = true;
 }
 
-void Lobby::onExit(Data& data)
+void Lobby::onExit(Data& world)
 {
     
 }
 
-void Lobby::tick(Data& data)
+void Lobby::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(data))return;
+    if (HandleInput::EscPop(ctx.world))return;
 
     //轮询判断
-    for (const auto& btn : data.getButtonOf(getID())) {
+    for (const auto& btn : ctx.world.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
         switch (btn.status.ID) {
             case ButtonID::lobbystartButton:
                 //选择难度
-                data.gameIntend.replaceSelect = true;
+                ctx.world.gameIntend.replaceSelect = true;
                 break;
             default: break;
         }
@@ -70,19 +70,19 @@ void Select::onExit(Data& data)
     //ctx.renderData.isSelect = false;
 }
 
-void Select::tick(Data& data)
+void Select::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(data))return;
+    if (HandleInput::EscPop(ctx.world))return;
 
     //轮询判断
-    for (const auto& btn : data.getButtonOf(getID())) {
+    for (const auto& btn : ctx.world.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
         switch (btn.status.ID) {
             case ButtonID::selectRightButton:
                 //进入PU
-                data.gameIntend.replacePuGame = true;
+                ctx.world.gameIntend.replacePuGame = true;
                 break;
             default: break;
         }
@@ -103,10 +103,10 @@ void PuGame::onExit(Data& data)
 {
 }
 
-void PuGame::tick(Data& data)
+void PuGame::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPuase(data))return;
+    if (HandleInput::EscPuase(ctx.world))return;
 
     //游戏逻辑
 }
@@ -128,29 +128,29 @@ void Pause::onExit(Data& data)
 {
 }
 
-void Pause::tick(Data& data)
+void Pause::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(data))return;
+    if (HandleInput::EscPop(ctx.world))return;
 
     //轮询判断
-    for (const auto& btn : data.getButtonOf(getID())) {
+    for (const auto& btn : ctx.world.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
         switch (btn.status.ID) {
             case ButtonID::pauseLeftButton:
                 //继续游戏
-                data.gameIntend.popSta = true;
+                ctx.world.gameIntend.popSta = true;
                 break;
 
             case ButtonID::pauseMiddleButton:
                 //重新开始
-                data.gameIntend.restartPuGame = true;
+                ctx.world.gameIntend.restartPuGame = true;
                 break;
 
             case ButtonID::pauseRightButton:
                 //返回大厅
-                data.gameIntend.backLobby = true;
+                ctx.world.gameIntend.backLobby = true;
                 break;  
             default: break;
         }

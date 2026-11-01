@@ -12,9 +12,9 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& data)override;
-    void onExit(Data& data) override;
-    void tick(Data& data)override;
+    void onEnter(Data& world)override;
+    void onExit(Data& world) override;
+    void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };
 
@@ -25,9 +25,9 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& data)override;
-    void onExit(Data& data) override;
-    void tick(Data& data)override;
+    void onEnter(Data& world)override;
+    void onExit(Data& world) override;
+    void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };
 
@@ -38,9 +38,9 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& data)override;
-    void onExit(Data& data) override;
-    void tick(Data& data)override;
+    void onEnter(Data& world)override;
+    void onExit(Data& world) override;
+    void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };
 
@@ -51,9 +51,9 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& data)override;
-    void onExit(Data& data) override;
-    void tick(Data& data)override;
+    void onEnter(Data& world)override;
+    void onExit(Data& world) override;
+    void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };
 
