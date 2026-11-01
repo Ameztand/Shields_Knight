@@ -66,3 +66,6 @@ struct Rect {
 
 //单位区域(-1,-1)
 inline constexpr Rect Erect{Epos, 0, 0};
+
+//背景区域
+inline constexpr Rect BackgroundRect{ {0,0}, 1920, 1080 };//要不要引入config_design_view??
