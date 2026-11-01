@@ -10,6 +10,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../include/fit.h"
+
 #include "../logic/buttonManager/button.h"
 #include "../logic/stateMachine/IGameState.h"
 
@@ -65,10 +67,11 @@ void Renderer::renderTEST(sf::RenderWindow &window, const RenderData &renderData
 
 void Renderer::renderBackground(sf::RenderWindow &window, const Screen& screen,const RenderData &renderData)
 {
+    //临时加区分状态渲染背景
     static sf::Texture texture;//static有生命周期问题
-    static sf::Texture texture_button;//static有生命周期问题
+    static sf::Texture texture_null;
     static bool loaded = false;
-    static bool loaded_button = false;
+    static bool loaded_null = false;
     if (!loaded) {
         if (!texture.loadFromFile("./pic/background.png")) {
             std::cerr << "load ./pic/background.png failed\n";
@@ -77,43 +80,36 @@ void Renderer::renderBackground(sf::RenderWindow &window, const Screen& screen,c
             loaded = true;
         }
     }
-    if (!loaded_button) {
-        if (!texture_button.loadFromFile("./pic/LobbyStartButton.png")) {
-            std::cerr << "load ./pic/LobbyStartButton.png failed\n";
+    if (!loaded_null) {
+        if (!texture_null.loadFromFile("./pic/background_null.png")) {
+            std::cerr << "load ./pic/background_null.png failed\n";
             
         } else {
-            loaded_button = true;
+            loaded_null = true;
         }
     }
-    if (!loaded ) return;                       // ★ 加载失败就别画，空纹理什么都画不出来
+    //if (!loaded ) return;                       // ★ 加载失败就别画，空纹理什么都画不出来
 
     sf::Sprite sprite(texture);
+    sf::Sprite sprite_null(texture_null);
+    if (!renderData.gameSta_.empty() && renderData.gameSta_.front() == IGameState::GameSta::Lobby) {
+        FitResult backgroundFitResult = fitInto(sprite.getLocalBounds().size);
+        FitTransform res = fitApply(backgroundFitResult);
+        sprite.setScale(res.scale);
+        sprite.setPosition(res.pos);
 
-    const sf::Vector2f img = sprite.getLocalBounds().size;   // 图片真实尺寸（不靠猜）
-    const float kx = screen.design.x / img.x;                // 按宽铺满要几倍
-    const float ky = screen.design.y / img.y;                // 按高铺满要几倍
-    const float k  = (kx > ky) ? kx : ky;                    // ★ 取大的 = cover：填满，超出裁掉
+        window.draw(sprite);
+        return;
+    }
+    else {
+        FitResult backgroundFitResult = fitInto(sprite_null.getLocalBounds().size);
+        FitTransform res = fitApply(backgroundFitResult);
+        sprite.setScale(res.scale);
+        sprite.setPosition(res.pos);
 
-    sprite.setScale({k, k});                   // 等比，不变形
-
-    sprite.setPosition({0.f, 0.f});
-    window.draw(sprite);
-
-    if (!loaded_button ) return;                       // ★ 加载失败就别画，空纹理什么都画不出来
-
-    sf::Sprite sprite_button(texture_button);
-
-    const sf::Vector2f img_button_ = sprite_button.getLocalBounds().size;   // 图片真实尺寸（不靠猜）
-    const float kx_button_ = 200.f / img_button_.x;                // 按宽铺满要几倍
-    const float ky_button_ = 80.f / img_button_.y;                // 按高铺满要几倍
-    const float k_button_  = (kx_button_ > ky_button_) ? kx_button_ : ky_button_;                    // ★ 取大的 = cover：填满，超出裁掉
-
-    sprite_button.setScale({k_button_, k_button_});                   // 等比，不变形
-
-    sprite_button.setPosition({860.f,700.f});//手动同步rect
-    window.draw(sprite_button);
-    //临时渲染按钮，后续汇总到配置表
-
+        window.draw(sprite_null);
+        return;
+    }
 }
 
 void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderData)
@@ -123,7 +119,20 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
         const size_t staID = static_cast<size_t>(sta);
         for(const auto& btn : renderData.buttons_[staID])
         {
-            if(btn.status.ID == ButtonID::lobbystartButton) continue;//临时跳过
+            if (btn.status.ID == ButtonID::lobbystartButton) 
+            {
+                sf::Texture texture_button;//static有生命周期问题
+                bool F = texture_button.loadFromFile("./pic/LobbyStartButton.png");
+                sf::Sprite sprite_button(texture_button);
+
+                FitResult buttonFitResult = fitInto(sprite_button.getLocalBounds().size, btn.status.area, FitPolicy::Contain);
+                FitTransform res = fitApply(buttonFitResult, 1.3f);
+                sprite_button.setScale(res.scale);
+                sprite_button.setPosition(res.pos);
+
+                window.draw(sprite_button);
+                continue;
+            }
             const sf::Vector2f button_area_ = 
                 { static_cast<float>(btn.status.area.width), static_cast<float>(btn.status.area.height) };//int->float
             sf::RectangleShape shape(button_area_);

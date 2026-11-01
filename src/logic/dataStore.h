@@ -49,6 +49,7 @@ struct Intend {
 
 	bool initGameData = false;
 	bool initALLData = false;
+	bool resetTime = false;
 };
 
 
@@ -76,11 +77,7 @@ public:
 	const double getNow() const { return now_; }
 
 	//获取输入
-	void pushMsgData(const MsgData& out)
-	{
-		cacheMsgData_ = out;
-		//时间戳
-	}
+	void pushMsgData(const MsgData& out) { cacheMsgData_ = out; }
 	const MsgData& getMsgData()const{ return cacheMsgData_; }
 
 	//按钮
