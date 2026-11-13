@@ -154,17 +154,9 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
         if (!renderData.entitys_[staID].empty()) {
             for (const auto& ety : renderData.entitys_[staID])
             {
-                const sf::Vector2f button_area_ =
-                { static_cast<float>(ety.status.collisionBox.width), static_cast<float>(ety.status.collisionBox.height) };//int->float
-                sf::RectangleShape shape(button_area_);
-                const sf::Vector2f button_pos_ =
-                { static_cast<float>(ety.status.collisionBox.pos.x), static_cast<float>(ety.status.collisionBox.pos.y) };
-                shape.setPosition(button_pos_);
-                //颜色
+                sf::RectangleShape shape({ ety.w, ety.h });
+                shape.setPosition({ ety.left(), ety.top() });   // 中心 → 左上角
                 shape.setFillColor(sf::Color::Red);
-                //看不懂的，还会报错
-                //shape.setOutlineThickness(thickness);
-                //shape.setOutlineColor(outline);
                 window.draw(shape);
             }
         }

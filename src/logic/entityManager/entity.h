@@ -4,34 +4,21 @@
 //#include "../stateMachine/IGameState.h"
 #include "entityID.h"
 
-struct EntityConfig {
-    Position pos;
-    Rect collisionBox;
-    //Rect artArea;
-    EntityID ID;
-};
-
 struct Entity {
-    EntityConfig status;
+    EntityID ID = EntityID::Null;
 
-    int Vx = 0;
-    int Vy = 0;
+    Vec2  pos;                      // 中心 = 碰撞箱中心 = 逻辑位置
+    Vec2  vel;                      // 像素/秒
+    float w = 100.f, h = 100.f;     // 碰撞箱尺寸
+    float speed = 300.f;            // 像素/秒
 
-    void updateMove() {
-        Position temp = status.pos;
-        temp.x += Vx;
-        temp.y += Vy;
-        status.pos = temp;
+    // 碰撞箱是【派生的】，不存储
+    float left()    const { return pos.x - w * 0.5f; }
+    float top()     const { return pos.y - h * 0.5f; }
+    float right()   const { return pos.x + w * 0.5f; }
+    float bottom()  const { return pos.y + h * 0.5f; }
 
-        Position tempBox = status.collisionBox.pos;
-        tempBox.x += Vx;
-        tempBox.y += Vy;
-        status.collisionBox.pos = tempBox;
+    void updateMove(float dt) {
+        pos = pos + vel * dt;            // ← 只动一个东西
     }
-
-    // 保留默认构造（以防别的地方要空构造）
-    Entity() = default;
-
-    // 接收配置的构造函数
-    explicit Entity(const EntityConfig& config) : status(config) {}
 };

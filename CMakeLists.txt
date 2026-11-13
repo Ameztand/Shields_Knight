@@ -74,6 +74,11 @@ target_link_libraries(Shields_Knight PRIVATE
     SFML::Window
     SFML::System)
 
+#输入法禁用相关
+if(WIN32)
+    target_link_libraries(Shields_Knight PRIVATE imm32)
+endif()
+
 # ---------------- 编译选项（两个工具链各自的“开发期”开关） ----------------
 target_compile_options(Shields_Knight PRIVATE ${SK_DEV_COMPILE} ${SK_CHARSET})
 if(SK_DEV_LINK)

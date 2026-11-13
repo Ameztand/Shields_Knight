@@ -14,6 +14,7 @@
 | V0.1.0.4 | 背景与贴图占位 | 背景按状态切换；按钮贴图占位；时间戳打通 |
 | V0.1.0.5 | 引入 `StateContext` | 状态 `tick` 改吃每帧上下文，为后续拆 `Data` 铺路 |
 | V0.1.0.6 | 生命周期四事件 + 实体子系统骨架 | 状态机加 onSuspend/onResume；拆 PuGame；实体走按状态注册（更新未接）；CMakePresets 改 SFML_DIR |
+| V0.1.0.7 | 第一个可操作循环 | 实体 WASD 移动；dt 由 Logic 中央计算；坐标 int→float；禁用输入法 |
 
 ## 待办
 
@@ -56,7 +57,12 @@
 - [ ] 按游戏模式拆分 `GameData`（`PuGameData` / `AtGameData`…）+ `src/logic/gameData/` 目录
       触发条件：第二个游戏模式出现。拆之前先看两者的真实共性，别提前抽基类
 - [ ] 死代码清理（见 README「死代码」表）
-- [ ] EntityManager::tick 为空 → 实体可渲染但不会移动
+
+
+- { 主任务 } 拆 `EntityManager`：实体搬进 `PuGameData`，渲染走 `collectView` + `ViewRect`
+      为什么是它：回合逻辑要写在 `PuGame::tick`，但实体住在 `EntityManager`（Logic 持有），
+      状态够不着自己的单位 —— **它挡在业务前面**
+      状态：触发条件已到（第一个实体实例存在），不再是条件性待办
 
 ## 编码约束（与构建相关，勿删）
 

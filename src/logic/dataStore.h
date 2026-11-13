@@ -59,6 +59,8 @@ private:
 	//using GameSta = IGameState::GameSta;
 
 	double now_ = 0;
+	double lastNow_ = 0;      // ← 私有记忆，不出这个类
+	double deltaMs_ = 0;
 
 	MsgData cacheMsgData_ = {};
 	std::array<std::vector<Button>, kStateCount> buttons_;//全部按钮
@@ -73,8 +75,15 @@ public:
 	Intend gameIntend;
 
 	//时间戳
-	void updataNow(const double now) { now_ = now; }
+	void updataNow(const double now) 
+	{
+		deltaMs_ = now - lastNow_;              // ① 算差值
+		if (deltaMs_ > 100.0) deltaMs_ = 100.0; // ② 钳制
+		lastNow_ = now;                         // ③ 记下这一帧，给下一帧当"上次"
+		now_ = now;
+	}
 	double getNow() const { return now_; }
+	double getDeltaSec() const { return deltaMs_ * 0.001; }//ms转为s
 
 	//获取输入
 	void pushMsgData(const MsgData& out) { cacheMsgData_ = out; }

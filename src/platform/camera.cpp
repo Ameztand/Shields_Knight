@@ -1,5 +1,11 @@
 #include "camera.h"
 
+//为了禁用输入法
+#ifdef _WIN32
+#include <windows.h>
+#include <imm.h>
+#endif
+
 
 
 Window::Window()
@@ -8,6 +14,11 @@ Window::Window()
               sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close)//有标题栏|允许用户拖边框改变大小|有关闭按钮
 {
     window_.setFramerateLimit(60);//帧率
+
+#ifdef _WIN32
+    // 解除输入法与游戏窗口的关联：WASD 不被中文输入法截走
+    ImmAssociateContext(static_cast<HWND>(window_.getNativeHandle()), nullptr);
+#endif
 }
 
 bool Window::isOpen() const

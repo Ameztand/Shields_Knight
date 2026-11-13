@@ -6,7 +6,6 @@
 
 #include <vector>
 
-//ģʽһ
 class PuGame :public IGameState {
 private:
     const IGameState::GameSta ID = IGameState::GameSta::PuGame;

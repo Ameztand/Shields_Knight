@@ -23,7 +23,7 @@ public:
 
     const std::array<std::vector<Entity>, kStateCount>& commitEntitys();
 
-    void tick(Data& data, const IGameState::GameSta nowSta);
+    void tick(Data& data, const IGameState::GameSta nowSta, double dt);
 
     void initEntityManager();
 };

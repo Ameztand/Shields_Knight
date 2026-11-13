@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 
-//逻辑坐标（没看懂）
+// 二维向量：位置、速度、方向共用。float 精度，用于会动的东西。
 struct Vec2 {
     float x = 0.f;
     float y = 0.f;
