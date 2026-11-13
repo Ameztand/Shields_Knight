@@ -1,65 +1,65 @@
-# Shields_Knight
-
-**当前版本：V0.1.0.1 添加逻辑层**
-
-> 作为V0.1.0的子版本，加入README.md，加入CMake，调整md结构，并把项目转移到Shields_Knight仓库
-
-> 还存在修复md描述与实际不符的问题
-
-现状口径：能开窗、能画测试图、能按 Esc 走栈；按钮不显示
-
-## 构建
-- 前置：MinGW g++ 14.2.0 / SFML 3.1.0 / CMake ≥3.21
-- 三条命令：configure → build → 运行
-- ⚠️ 运行 CWD 必须是项目根（renderTEST 用相对路径 ./pic/test.png）
-
-## 现状矩阵
-| 模块 | 代码 | 实测 | 说明 |
-|---|---|---|---|
-| 输入层 | ✅ | ✅ | 五态 KeySta + 鼠标并入，COUNT=KeyCount+1
-| 状态机 | ✅ | ✅ | 栈 push/pop/replace，Esc→pop 实测通过
-| 按钮层 | ✅ | ⚠️ | 快照可算，但 RenderData 为空 → 不显示
-| 渲染层 | ✅ | ✅ | 仅 renderTEST（test.png + 绿圆）
-| 长悬停 | ✅ | ❌ | now_ 恒 0，永不触发
-| 长按 | ✅ | ❌ | isLongPress 从不赋值
-
-## 已完成 (V0.1.0)
-骨架已通，但渲染快照为空，按钮可以点击但是没渲染
-- **逻辑层骨架**：`logic` 内部调度 `State ` / `ButtonManager` / `Data`
-  三件，分别对应**状态机**、**按钮适配器**、**顶级数据黑板**。
-
-- **数据流贯通**：`Input -> Logic::tick -> Logic::commitRenderData -> Renderer::render`。
-  `main` 单循环：`poll -> Exit 判定 -> tick -> commit -> render`。
-
-- **状态机**：栈式 `Lobby / Select / Pause / PuGame`，`onEnter/onExit` 成对，
-  `push/pop/replace` 时按钮随之挂载卸载。
-
-- **按钮表驱动**：`ButtonConfig`（区域 + ID，静态配置）与 `Button`（悬
-停/点击
-  运行时态）分离；按状态查 `kButtonTable`，状态类不再持有按钮列表。
-- **黑板**：状态机 `tick(Data&)` 只读输入结构体，**非只读黑板快照**，
-**数据和意图还保留搬运的架构，后续打包为上下文**
+# Shields_Knight 版本记录与待办
 
 ## 版本记录
 
-| 版本 | 内容 |
-|---|---|
-| V0.0.1 | 输入重构：`IInputLayer` 抽象 + 五态 `KeySta` + 事件转快照 |
-| V0.0.2 | 时间组块（`TimeClock`）；渲染像素改由 `main` 传入预留接口 |
-| V0.1.0 | 逻辑层：状态机 + 按钮适配 + 数据黑板；主循环接上 tick/render |
-| V0.1.0.1 | 修复md描述与实际不符的问题 |
+| 版本 | 内容 | 关键决定 |
+|---|---|---|
+| V0.0.0 | 初始化项目与基础架构 | — |
+| V0.0.1 | 输入重构 | `IInputLayer` 抽象 + 五态 `KeySta` + 事件转快照 |
+| V0.0.2 | 时间组块 | `TimeClock` 保留接口；渲染像素由 `main` 传入 |
+| V0.1.0 | 逻辑层 | 状态机 + 按钮表驱动 + 数据黑板；主循环接上 tick / render |
+| V0.1.0.1 | 文档与构建校准 | 接入 CMake；README / PLAN / DEVLOG 调整结构 |
+| V0.1.0.2 | 分离 `Window` | 加入 `sf::View` 与 letterbox；MinGW / MSVC 双工具链 |
+| V0.1.0.3 | `fit` 重写 | `zoom.h` → `fit.h`，`FitResult` 改为承载 center / size / pos |
+| V0.1.0.4 | 背景与贴图占位 | 背景按状态切换；按钮贴图占位；时间戳打通 |
+| V0.1.0.5 | 引入 `StateContext` | 状态 `tick` 改吃每帧上下文，为后续拆 `Data` 铺路 |
+| V0.1.0.6 | 生命周期四事件 + 实体子系统骨架 | 状态机加 onSuspend/onResume；拆 PuGame；实体走按状态注册（更新未接）；CMakePresets 改 SFML_DIR |
 
-## 已知问题（V0.1.0 收尾清单）
+## 待办
 
-- [ ] `Logic::commitRenderData()` 的 `RenderData` 尚未填充，快照为空 -> 按钮不显示
-- [ ] `MousePos` 为窗口像素，未映射到逻辑坐标 -> 窗口缩放后命中错位
-- [ ] `Button::isClicked` 是电平而非下降沿 -> 按住会连续触发
-- [ ] `Data::updataNow()` 未调用，`now_` 恒为 0 -> 长悬停失效
-- [ ] 下层状态按钮表未注册 -> Pause 无法叠加渲染下层
-- [ ] `config_rect.h` 中 Select/Pause 的左键与中键坐标完全重合 -> 中间按钮点不到
-- [ ] 本次上传git会把测试图片上传(一张微信截图做测试用例)
+### 主线
 
-## 重构目标 (待办)
+1. **收窄渲染契约**：`Config` 运行时结构 + 适配器 + 统一 `drawLayer` + 纹理缓存
+2. **让数据离开代码**：JSON 读取 + 校验 + 失败回退 + 手动重载
+3. **业务地基**：dt → 实体 → 第一段动画
 
-- [ ] 渲染由 SFML 重写（尤其是贴合可调整窗口大小），UI 渲染完全重写
-- [ ] 后续考虑 `config` 初始化读取 txt 文本
+顺序不可换：1 不做完，2 没有结构可填；2 不做完，3 的实体表无处可放。
+
+### 长期
+
+- Select / Pause 中间按钮接入语义
+- 覆盖层的按钮注册（依赖第 1 项里的 `syncButtonsWithStack`）
+- 窗口缩放后鼠标命中的回归验证
+- 死代码清理
+- 设计分辨率收敛到单一来源（目前三处硬编码）
+- `Data` 继续拆分：`Intend` 是否移出黑板
+
+## 现状与缺陷
+
+见 `README.md` 的「状态矩阵」「已知缺陷」。
+
+## 判断与取舍
+
+见 `docs/DIRECTION.md`，决策理由记入 `docs/DEVLOG.md`。
+
+## 待办（第二批）
+
+- [ ] 项目根加 `.editorconfig`：`charset = utf-8`（防止新建文件被存成 GBK）
+- [ ] `StateContext` 字段改名：`world` → `frame`
+      理由：`Data` 装的是「本帧输入 + 时间 + 意图」，不是世界状态；世界状态已独立为 `GameData`
+- [ ] `Intend` 移出 `Data`（R3）
+- [ ] 能力门控表 + 仲裁管线
+      触发条件：出现「同一对象在不同系统里被区别对待」的规则
+      挂载点：表由 `Logic` 持有；`collectView` 与输入处理是消费方
+      临时的裁决者：`Entity::alive`（领域状态，不是渲染决策）
+      参考形态：UE GameplayTags / Godot process_mode
+- [ ] 按游戏模式拆分 `GameData`（`PuGameData` / `AtGameData`…）+ `src/logic/gameData/` 目录
+      触发条件：第二个游戏模式出现。拆之前先看两者的真实共性，别提前抽基类
+- [ ] 死代码清理（见 README「死代码」表）
+- [ ] EntityManager::tick 为空 → 实体可渲染但不会移动
+
+## 编码约束（与构建相关，勿删）
+
+- 源文件 UTF-8 无 BOM
+- 控制台输出只用 ASCII
+- 调试输出统一 `std::cout` + `std::endl`

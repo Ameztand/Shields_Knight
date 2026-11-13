@@ -12,5 +12,6 @@ enum class ButtonID {
     selectRightButton,
     pauseLeftButton,
     pauseMiddleButton,
-    pauseRightButton
+    pauseRightButton,
+    puGameTestButton
 };

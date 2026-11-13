@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include <SFML/System/Vector2.hpp>
+//#include <SFML/System/Vector2.hpp>
 
 #include "../include/common.h"
 #include "../include/screen.h"      // Screen
@@ -24,13 +24,23 @@ public:
         KeySta F1 = KeySta::Null;
         KeySta Alt = KeySta::Null;
 
+        KeySta W = KeySta::Null;      // ← 加 4 个
+        KeySta A = KeySta::Null;
+        KeySta S = KeySta::Null;
+        KeySta D = KeySta::Null;
+
         KeySta MouseL = KeySta::Null;//鼠标左键
         Position MousePos = Epos;
     };
 
+    // ← 加一个助手：五态里哪些算"按着"
+    static constexpr bool held(KeySta s) {
+        return s != KeySta::Null && s != KeySta::Rising;
+    }
+
     virtual ~IInputLayer() = default;
 
-    virtual void HandleEvent(const Screen& screen, std::optional<sf::Vector2i> mousePos) = 0;
+    //virtual void HandleEvent(const Screen& screen, std::optional<sf::Vector2i> mousePos) = 0;
 
     virtual void onEvent(const sf::Event& event) = 0;
 

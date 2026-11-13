@@ -124,6 +124,98 @@
 
 ---
 
+## V0.1.6 — 状态生命周期四事件 + 渲染接缝
+
+### 做了什么
+
+- `IGameState` 增加 `onSuspend` / `onResume`（纯虚），`State::pushSta` / `popSta` 分别挂上
+- `collectView(View&)` 成为「状态 → 画面」的接缝，`Logic` 遍历**整个栈**收集
+- `GameData` 独立，由状态持有（**不放进 `Data`**）
+- 实体走独立渲染通道，先画红色矩形
+
+### 为什么加 `onSuspend` / `onResume`
+
+「进入暂停就 `cnt /= 2`」这种规则：不该写进 `Pause`（UI 不该懂游戏规则），也不该在每个触发暂停的调用点手写（规则会散落）。
+
+**缺的不是接口，是状态机的「被覆盖」事件。** 补上之后规则只有一份，且任何覆盖层（背包、对话框、商店）压上来都自动生效。
+
+生命周期调用序列：
+
+| 动作 | 序列 |
+|---|---|
+| 启动（栈空） | `Lobby.onEnter` |
+| replace（栈 1） | `旧.onExit` → `新.onEnter` |
+| push（栈 1） | `栈顶.onSuspend` → `新.onEnter` |
+| pop（栈 2） | `栈顶.onExit` → `新栈顶.onResume` |
+| pop（栈 1） | `旧.onExit`（栈空，无 resume） |
+| 暂停中重开（栈 2） | `Pause.onExit` → `PuGame.onResume` → `PuGame.onExit` → `新.onEnter` |
+
+**最后一行是坑**：`replaceSta` = `popSta` + `pushSta`，所以「恢复」紧接「销毁」。
+`onResume` 里不要放必须持久、必须成对的逻辑。
+
+各回调的职责判据：**对象还活着吗？**
+
+| 情形 | 回调 |
+|---|---|
+| 新建 / 销毁 | `onEnter` / `onExit` |
+| 活着但被盖住 / 重新露出 | `onSuspend` / `onResume` |
+| 每帧 | `tick` |
+
+### 为什么 `GameData` 不放进 `Data`
+
+判据是本文前面那条：生命周期是否一致？写者是否唯一？
+
+`now_` / 输入快照 / 意图是「每帧被覆盖」，`cnt` 是「跨帧累积」——生命周期不一致，拆。
+`Data` 的身份是**本帧通信板**，不是世界状态。它名字叫 `Data` 是因为最初「什么数据都往这放」，但内容其实已经很专一。
+
+### 为什么不给 `Entity` 加 `draw()` 和 `visible`
+
+参考过「能力门控 + 仲裁管线」的做法（UE 的 GameplayTags、Godot 的 `process_mode`），但那是**多维度能力**（可操作 / 可碰撞 / 可渲染 / 可选中），不是一次渲染判断。简化成 bool 会丢掉多维、单一真相、统一仲裁三样东西。
+
+更关键的是它会推翻本文第 3 条方法论（立即模式渲染）。而 UE 自己也是这么分的：`AActor` 是对象，`FPrimitiveSceneProxy` 是结构体，渲染线程只读代理、永不碰 Actor。
+
+**现在的临时裁决者：`Entity::alive`**——领域状态进实体，渲染决策不进。
+
+---
+
+## 踩坑记录
+
+### 前置声明的 class-key 必须和定义一致（LNK2019 的真凶）
+
+`struct Button` 的定义，前置声明必须也写 `struct Button;`。
+
+MSVC 把 class-key 编进 mangled name（`U`=struct，`V`=class），g++ 的 Itanium ABI 不区分。
+结果：**g++ 链接通过，MSVC 报「找不到明明定义了的函数」**。
+
+排查方法：对定义方和引用方的 `.obj` 跑 `dumpbin /SYMBOLS`，看括号里是 `class` 还是 `struct`。
+这招对所有 LNK2019 通用，比重读代码快得多。
+
+### 源码文件编码必须是 UTF-8 无 BOM
+
+`CMakeLists.txt` 开了 `/source-charset:utf-8`，GBK 文件会报 C4819 / C2001。
+VS 新建文件默认用系统 ANSI（GBK），要另存为 UTF-8。
+
+### 调试输出一律用 ASCII
+
+执行字符集是 GBK(936)，VS Code 终端默认 UTF-8(65001)。中文要过「源码 → 执行字符集 → 控制台代码页」三关，全角标点尤其容易乱码，而 ASCII 零关。
+
+### `printf` 与 `std::cout` 不要混用
+
+`printf` 的 `\n` 只在连控制台时刷新，被重定向时是全缓冲；`std::cout` 的 `std::endl` 强制 flush。
+混用会出现「cout 有输出、printf 没有」。
+
+### 32 位 MSVC + 64 位 SFML = `SFML_DIR-NOTFOUND`
+
+普通 PowerShell 里跑 `cmake --preset msvc`，会捡到 VS 的默认 `Hostx86` 工具链。SFML 包是 64 位，被 config 文件的架构检查拒绝 → `REQUIRED` 失败 → 没有 `build.ninja` → 后续 `cmake --build` 报「找不到 build.ninja」。
+
+排查：看 `build/msvc/CMakeCache.txt` 里的 `CMAKE_CXX_COMPILER` 是 `Hostx64` 还是 `Hostx86`。
+**`CMAKE_CXX_COMPILER` 一旦写进缓存就不会重新检测**，所以配错了必须删掉整个 `build/msvc`（VS 开着时删不掉，要先关 VS）。
+
+### 构建产物不一致会伪造出假的 LNK2019
+
+`.obj` 是 11 天前的、源码是今天的，照样能链上去，然后报一个「符号不存在」。
+判据：同一目录下所有 `.obj` 的时间戳应该在同一分钟内。不是就 clean 重建。
+
 ## 版本记录
 
 | 版本 | 内容 | 关键决定 |

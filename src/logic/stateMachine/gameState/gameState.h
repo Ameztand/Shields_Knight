@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IGameState.h"
-#include "../../include/common.h"
+#include "../IGameState.h"
+#include "../../../include/common.h"
 
 #include <vector>
 
@@ -14,6 +14,8 @@ private:
 public:
     void onEnter(Data& world)override;
     void onExit(Data& world) override;
+    void onSuspend(Data& world) override;
+    void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };
@@ -27,6 +29,8 @@ private:
 public:
     void onEnter(Data& world)override;
     void onExit(Data& world) override;
+    void onSuspend(Data& world) override;
+    void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };
@@ -40,19 +44,8 @@ private:
 public:
     void onEnter(Data& world)override;
     void onExit(Data& world) override;
-    void tick(StateContext& ctx)override;
-    IGameState::GameSta getID() const override;
-};
-
-//模式一
-class PuGame :public IGameState {
-private:
-    const IGameState::GameSta ID = IGameState::GameSta::PuGame;
-    //ButtonPtr buttons;
-
-public:
-    void onEnter(Data& world)override;
-    void onExit(Data& world) override;
+    void onSuspend(Data& world) override;
+    void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     IGameState::GameSta getID() const override;
 };

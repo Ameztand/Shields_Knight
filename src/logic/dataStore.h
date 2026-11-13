@@ -58,7 +58,7 @@ private:
 	using MsgData = IInputLayer::MsgData;
 	//using GameSta = IGameState::GameSta;
 
-	double now_;
+	double now_ = 0;
 
 	MsgData cacheMsgData_ = {};
 	std::array<std::vector<Button>, kStateCount> buttons_;//全部按钮
@@ -74,7 +74,7 @@ public:
 
 	//时间戳
 	void updataNow(const double now) { now_ = now; }
-	const double getNow() const { return now_; }
+	double getNow() const { return now_; }
 
 	//获取输入
 	void pushMsgData(const MsgData& out) { cacheMsgData_ = out; }

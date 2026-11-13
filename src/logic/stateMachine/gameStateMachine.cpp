@@ -1,9 +1,11 @@
 #include "gameStateMachine.h"
 
-#include "gameState.h"
+#include "./gameState/gameState.h"
+#include "./gameState/puGameState.h"
 
 void State::pushSta(Data& data, std::unique_ptr<IGameState> newState) {
     if (newState) {
+        if (!stack.empty()) stack.back()->onSuspend(data);//被压栈
         newState->onEnter(data);           // 入场调用 onEnter
         stack.push_back(std::move(newState));
     }
@@ -17,7 +19,12 @@ bool State::popSta(Data& data) {
     stack.back()->onExit(data);          // 出场调用 onExit
     stack.pop_back();
 
-    return stack.empty();
+    if (!stack.empty()) {
+        stack.back()->onResume(data);//不再压栈
+        return false;//栈不为空
+    }
+
+    return true;
 }
 
 void State::replaceSta(Data& data, std::unique_ptr<IGameState> newState) {

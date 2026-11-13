@@ -30,6 +30,8 @@ public:
     // 之后由类型强制。
     virtual void onEnter(Data& world) = 0;
     virtual void onExit(Data& world) = 0;
+    virtual void onSuspend(Data& world) = 0;
+    virtual void onResume(Data& world) = 0;
     virtual void tick(StateContext& ctx) = 0;
     virtual IGameState::GameSta getID() const = 0;
 };

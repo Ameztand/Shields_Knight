@@ -1,17 +1,26 @@
 {
   "version": 6,
-  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+
   "configurePresets": [
     {
       "name": "msvc",
-      "displayName": "MSVC v143 x64 + SFML(vc17包) -> build/msvc   [VS 2022 用这个]",
-      "description": "Ninja + MSVC，环境由 Visual Studio 自动注入（architecture.strategy=external）。放在第一位：VS 打开文件夹时默认选第一个预设。",
+      "displayName": "MSVC x64 + SFML(vc17) -> build/msvc    【VS 2022 专用】",
+      "description": "Ninja + MSVC x64。需要外部注入 x64 MSVC 环境：在 VS 2022 里打开文件夹即自动注入。放在第一位，VS 打开文件夹时默认选它。",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/msvc",
-      "architecture": { "value": "x64", "strategy": "external" },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_PREFIX_PATH": "D:/vsCodeTools/SFML-3.1.0-MSVC/SFML-3.1.0"
+        "CMAKE_MAKE_PROGRAM": "D:/Visual Studio Community 2022/IDE/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe",
+        "SFML_DIR": "D:/vsCodeTools/SFML-3.1.0-MSVC/SFML-3.1.0/lib/cmake/SFML"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -24,18 +33,20 @@
     },
     {
       "name": "mingw",
-      "description": "全部机器相关路径集中在这里，换电脑只改这个文件",
-      "displayName": "⚠ MinGW g++（仅 VS Code / 命令行，VS2022 里请勿选）",
+      "displayName": "MinGW g++ -> build/mingw    【VS Code / 任何终端】",
+      "description": "MinGW Makefiles。编译器与 make 都用绝对路径，不依赖任何环境变量；生成 compile_commands.json 供 VS Code IntelliSense 使用。",
       "generator": "MinGW Makefiles",
       "binaryDir": "${sourceDir}/build/mingw",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_COMPILER": "D:/vsCodeTools/mingw64/bin/g++.exe",
         "CMAKE_MAKE_PROGRAM": "D:/vsCodeTools/mingw64/bin/mingw32-make.exe",
-        "CMAKE_PREFIX_PATH": "D:/vsCodeTools/SFML-3.1.0"
+        "SFML_DIR": "D:/vsCodeTools/SFML-3.1.0/lib/cmake/SFML",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     }
   ],
+
   "buildPresets": [
     {
       "name": "msvc",

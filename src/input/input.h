@@ -40,7 +40,7 @@ private:
 public:
     explicit Input() = default;
 
-    void HandleEvent(const Screen& screen, std::optional<sf::Vector2i> mousePos) override;
+    void HandleEvent(const Screen& screen, std::optional<sf::Vector2i> mousePos);
 
     void onEvent(const sf::Event& event) override;
     

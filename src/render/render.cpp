@@ -117,34 +117,56 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
     for(const auto& sta : renderData.gameSta_)
     {
         const size_t staID = static_cast<size_t>(sta);
-        for(const auto& btn : renderData.buttons_[staID])
-        {
-            if (btn.status.ID == ButtonID::lobbystartButton) 
+        if (!renderData.buttons_[staID].empty()) {
+            for (const auto& btn : renderData.buttons_[staID])
             {
-                sf::Texture texture_button;//static有生命周期问题
-                bool F = texture_button.loadFromFile("./pic/LobbyStartButton.png");
-                sf::Sprite sprite_button(texture_button);
+                if (btn.status.ID == ButtonID::lobbystartButton)
+                {
+                    sf::Texture texture_button;//static有生命周期问题
+                    bool F = texture_button.loadFromFile("./pic/LobbyStartButton.png");
+                    sf::Sprite sprite_button(texture_button);
 
-                FitResult buttonFitResult = fitInto(sprite_button.getLocalBounds().size, btn.status.area, FitPolicy::Contain);
-                FitTransform res = fitApply(buttonFitResult, 1.3f);
-                sprite_button.setScale(res.scale);
-                sprite_button.setPosition(res.pos);
+                    FitResult buttonFitResult = fitInto(sprite_button.getLocalBounds().size, btn.status.area, FitPolicy::Contain);
+                    FitTransform res = fitApply(buttonFitResult, 1.3f);
+                    sprite_button.setScale(res.scale);
+                    sprite_button.setPosition(res.pos);
 
-                window.draw(sprite_button);
-                continue;
-            }
-            const sf::Vector2f button_area_ = 
+                    window.draw(sprite_button);
+                    continue;
+                }
+                const sf::Vector2f button_area_ =
                 { static_cast<float>(btn.status.area.width), static_cast<float>(btn.status.area.height) };//int->float
-            sf::RectangleShape shape(button_area_);
-            const sf::Vector2f button_pos_ = 
+                sf::RectangleShape shape(button_area_);
+                const sf::Vector2f button_pos_ =
                 { static_cast<float>(btn.status.area.pos.x), static_cast<float>(btn.status.area.pos.y) };
-            shape.setPosition(button_pos_);
-            //颜色
-            shape.setFillColor(sf::Color::Green);
-            //看不懂的，还会报错
-            //shape.setOutlineThickness(thickness);
-            //shape.setOutlineColor(outline);
-            window.draw(shape);
+                shape.setPosition(button_pos_);
+                //颜色
+                shape.setFillColor(sf::Color::Green);
+                //看不懂的，还会报错
+                //shape.setOutlineThickness(thickness);
+                //shape.setOutlineColor(outline);
+                window.draw(shape);
+            }
+        }
+        
+
+        //临时借用渲染实体
+        if (!renderData.entitys_[staID].empty()) {
+            for (const auto& ety : renderData.entitys_[staID])
+            {
+                const sf::Vector2f button_area_ =
+                { static_cast<float>(ety.status.collisionBox.width), static_cast<float>(ety.status.collisionBox.height) };//int->float
+                sf::RectangleShape shape(button_area_);
+                const sf::Vector2f button_pos_ =
+                { static_cast<float>(ety.status.collisionBox.pos.x), static_cast<float>(ety.status.collisionBox.pos.y) };
+                shape.setPosition(button_pos_);
+                //颜色
+                shape.setFillColor(sf::Color::Red);
+                //看不懂的，还会报错
+                //shape.setOutlineThickness(thickness);
+                //shape.setOutlineColor(outline);
+                window.draw(shape);
+            }
         }
     }
     //临时渲染按钮，后续汇总到配置表

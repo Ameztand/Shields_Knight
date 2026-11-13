@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(Shields_Knight
-        VERSION 0.1.0.1
+        VERSION 0.1.0.6
         DESCRIPTION "SFML 3.1 / C++17 desktop game shell"
         LANGUAGES CXX)
 
@@ -19,6 +19,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # 用 Release 而不是 Debug：SFML 官方包的 debug 库（*d-3.dll）通常与 MinGW 不兼容。
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
+# ---------------- 环境自检 ----------------
+# MSVC 只有在 x64 环境下才能链接 SFML（官方包是 64 位）。
+# 普通 PowerShell 里直接 configure 会捡到 VS 默认的 32 位工具链，
+# 表现为 SFML_DIR-NOTFOUND + 一堆看不懂的错。这里提前拦住。
+if(MSVC AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR
+        "检测到 32 位 MSVC（Hostx86），无法链接 64 位 SFML。\n"
+        "解决：用 VS 2022 打开本文件夹构建，或先运行\n"
+        "  \"D:/Visual Studio Community 2022/IDE/VC/Auxiliary/Build/vcvars64.bat\"\n"
+        "再执行 cmake --preset msvc")
 endif()
 
 # ---------------- 按编译器分支（MinGW g++ / MSVC 共用同一份源码） ----------------

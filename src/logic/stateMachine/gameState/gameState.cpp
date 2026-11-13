@@ -1,23 +1,23 @@
 #include "gameState.h"
 
-#include "../dataStore.h"
-#include "../buttonManager/button.h"
-#include "../buttonManager/buttonID.h"
+#include "../../dataStore.h"
+#include "../../buttonManager/button.h"
+#include "../../buttonManager/buttonID.h"
 
 
 namespace HandleInput{
-    bool EscPop(Data& world)
+    bool EscPop(Data& world, const IInputLayer::MsgData& msgData)
     {
         using KeySta = IInputLayer::KeySta;
-        bool temp = (world.getMsgData().Esc == KeySta::Falling);
+        bool temp = (msgData.Esc == KeySta::Falling);
         world.gameIntend.popSta = temp;
         return temp;
     }
 
-    bool EscPuase(Data& world)
+    bool EscPuase(Data& world, const IInputLayer::MsgData& msgData)
     {
         using KeySta = IInputLayer::KeySta;
-        bool temp = (world.getMsgData().Esc == KeySta::Falling);
+        bool temp = (msgData.Esc == KeySta::Falling);
         world.gameIntend.pushPause = temp;
         return temp;
     }
@@ -33,13 +33,22 @@ void Lobby::onExit(Data& world)
     
 }
 
+void Lobby::onSuspend(Data& world)
+{
+
+}
+
+void Lobby::onResume(Data& world)
+{
+}
+
 void Lobby::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(ctx.world))return;
+    if (HandleInput::EscPop(ctx.world, ctx.msgData))return;
 
     //轮询判断
-    for (const auto& btn : ctx.world.getButtonOf(getID())) {
+    for (const auto& btn : ctx.buttonList ) {
         if (!btn.isClicked) continue;
 
         switch (btn.status.ID) {
@@ -70,10 +79,18 @@ void Select::onExit(Data& data)
     //ctx.renderData.isSelect = false;
 }
 
+void Select::onSuspend(Data& world)
+{
+}
+
+void Select::onResume(Data& world)
+{
+}
+
 void Select::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(ctx.world))return;
+    if (HandleInput::EscPop(ctx.world, ctx.msgData))return;
 
     //轮询判断
     for (const auto& btn : ctx.world.getButtonOf(getID())) {
@@ -94,28 +111,6 @@ IGameState::GameSta Select::getID() const
     return ID;
 }
 
-void PuGame::onEnter(Data& data)
-{
-    //data.gameIntend.initGameData = true;
-}
-
-void PuGame::onExit(Data& data)
-{
-}
-
-void PuGame::tick(StateContext& ctx)
-{
-    //退出
-    if (HandleInput::EscPuase(ctx.world))return;
-
-    //游戏逻辑
-}
-
-IGameState::GameSta PuGame::getID() const
-{
-    return ID;
-}
-
 void Pause::onEnter(Data& data)
 {
     //buttons.clear();
@@ -128,10 +123,18 @@ void Pause::onExit(Data& data)
 {
 }
 
+void Pause::onSuspend(Data& world)
+{
+}
+
+void Pause::onResume(Data& world)
+{
+}
+
 void Pause::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(ctx.world))return;
+    if (HandleInput::EscPop(ctx.world, ctx.msgData))return;
 
     //轮询判断
     for (const auto& btn : ctx.world.getButtonOf(getID())) {

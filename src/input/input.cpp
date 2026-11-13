@@ -77,6 +77,11 @@ void Input::updateMsgData()
     msgData.F1  = getSta(sf::Keyboard::Key::F1);
     msgData.Alt = getSta(sf::Keyboard::Key::LAlt);//单左alt
 
+    msgData.W = getSta(sf::Keyboard::Key::W);
+    msgData.A = getSta(sf::Keyboard::Key::A);
+    msgData.S = getSta(sf::Keyboard::Key::S);
+    msgData.D = getSta(sf::Keyboard::Key::D);
+
     msgData.MouseL  = keySta_[COUNT - 1];
     msgData.MousePos = mousePos_;
 }

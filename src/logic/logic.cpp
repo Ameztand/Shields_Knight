@@ -2,13 +2,15 @@
 
 #include <memory>
 
-#include "./stateMachine/gameState.h"
+#include "./stateMachine/gameState/gameState.h"
+#include "./stateMachine/gameState/puGameState.h"
 
 
 void Logic::onEnter()
 {
 	data.initData();
 	buttonManager.initButtonManager();
+	//entityManager.init
 	gameSta.initGameSta(data);
 }
 
@@ -31,21 +33,35 @@ void Logic::regCurButtons() {
     buttonManager.registerButtons(gameSta.getStaID());
 }
 
+void Logic::delCurEntitys() {
+	entityManager.deleteEntitys(gameSta.getStaID(), EntityID::testEntity);
+}
+
+void Logic::regCurEntitys() {
+	const auto sta = gameSta.getStaID();
+	//临时调用
+	if (sta == IGameState::GameSta::PuGame) entityManager.registerEntitys(sta, EntityID::testEntity);
+}
+
 void Logic::replaceSta(std::unique_ptr<IGameState> sta) {
 	if(gameSta.getStaID() == IGameState::GameSta::Pause)popSta();//先退出暂停状态
 
     delCurButtons();
+	delCurEntitys();
     gameSta.replaceSta(data, std::move(sta));
     regCurButtons();
+	regCurEntitys();
 }
 
 void Logic::pushSta(std::unique_ptr<IGameState> sta) {
     gameSta.pushSta(data, std::move(sta));
     regCurButtons();
+	regCurEntitys();
 }
 
 void Logic::popSta() {
     delCurButtons();
+	delCurEntitys();
     gameSta.popSta(data);
 }
 
@@ -90,7 +106,7 @@ void Logic::tick(const IInputLayer::MsgData& out, const double now)
 	data.updataButtonSta(buttonManager.commitButtons());//临时按键输入写入黑板,方便状态机获取
 
 	if (auto* s = gameSta.getState()) {   // 空栈保护
-		StateContext ctx{ data };  // 有界上下文
+		StateContext ctx{ data , data.getMsgData() , buttonManager.commitButtons()[static_cast<size_t>(s->getID())]  };  // 有界上下文
 		s->tick(ctx);
 	}
 
@@ -103,6 +119,10 @@ void Logic::tick(const IInputLayer::MsgData& out, const double now)
 	clearIntend();
 }
 
+// 数据流三条规则：
+// 1. 状态产出：只能 push_back 自己负责的条目，不读别人的
+// 2. Logic 汇合：把多个生产者合成一帧 + 排序，不加工任何条目
+// 3. Render 消费：只按字段拆包，从不回头问"这是谁"
 RenderData Logic::commitRenderData()
 {
 	RenderData renderData;
@@ -112,6 +132,8 @@ RenderData Logic::commitRenderData()
 	renderData.gameStaDepth_ = gameSta.getStaDepth();
 
 	renderData.debugPanel_ = data.getDebug();
+
+	renderData.entitys_ = entityManager.commitEntitys();
 
     return renderData;
 }

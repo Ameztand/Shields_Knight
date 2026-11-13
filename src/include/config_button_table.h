@@ -23,6 +23,9 @@ inline constexpr std::array<ButtonConfig, 3> kPauseButtons {{
     {pauseMiddleButton, ButtonID::pauseMiddleButton}, 
     {pauseRightButton, ButtonID::pauseRightButton} 
 }};
+inline constexpr std::array<ButtonConfig, 1> kPuGameButtons{ {
+    { puGameTestButton, ButtonID::puGameTestButton }
+} };
 
 //按钮矩阵
 struct ButtonRange {
@@ -43,5 +46,5 @@ inline constexpr std::array<ButtonRange, kStateCount> kButtonTable {{
     { kLobbyButtons.data(),  kLobbyButtons.size()  },  // Lobby
     { kSelectButtons.data(), kSelectButtons.size() },  // Select
     { kPauseButtons.data(),  kPauseButtons.size()  },  // Pause
-    {},                                          // PuGame
+    { kPuGameButtons.data(), kPuGameButtons.size() },            // PuGame  ← 改这行
 }};
