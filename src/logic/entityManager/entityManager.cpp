@@ -1,10 +1,10 @@
 #include "entityManager.h"
 
-void EntityManager::registerEntitys(const IGameState::GameSta nowSta, const EntityID id)
+void EntityManager::registerEntitys(const EntityID id)
 {
-	size_t sta = (size_t)nowSta;
-	entitys[sta].clear();
+	//entitys_.clear();
 
+	//临时构造
 	Entity e;
 	e.ID = id;
 	e.pos = { 960.f, 540.f };              // 屏幕正中
@@ -13,27 +13,48 @@ void EntityManager::registerEntitys(const IGameState::GameSta nowSta, const Enti
 	e.h = 100.f;
 	e.speed = 300.f;                         // 像素/秒
 
-	entitys[sta].push_back(e);//临时构造
-}
-
-void EntityManager::deleteEntitys(const IGameState::GameSta nowSta, const EntityID id)
-{
-	size_t sta = (size_t)nowSta;
-	for (auto& ety : entitys[sta]) 
+	//放入
+	int i = entitys_.size();
+	if (freeList_.empty())
 	{
-		//if (ety.status.ID == id)
-		//{
-		//	ety.status.ID = EntityID::Null;//后续做真删除（换unorther_map）
-		//}
+		entitys_.push_back(e);
 	}
+	else
+	{
+		i = freeList_.front();
+		freeList_.pop();
+		entitys_[i] = e;
+	}
+	setoff[e.ID] = i;//建立索引
+
+	//entitys_.push_back(e);//临时构造
 }
 
-const std::array<std::vector<Entity>, kStateCount>& EntityManager::commitEntitys()
+void EntityManager::deleteEntitys(const EntityID id)
 {
-	return entitys;
+	auto it = setoff.find(id);
+	if (it != setoff.end()) 
+	{
+		int i = it->second;
+		freeList_.push(i);
+		entitys_[i].ID = EntityID::Null;
+		setoff.erase(id);
+		//return true;
+	}
+	//return false;
 }
 
-void EntityManager::tick(Data& data, const IGameState::GameSta nowSta, double dt)
+const std::vector<Entity>& EntityManager::commitEntitys() const
+{
+	return entitys_;
+}
+
+std::vector<Entity>& EntityManager::commitEntitys()
+{
+	return entitys_;
+}
+
+void EntityManager::tick(Data& data, double dt)
 {
 	//?仲裁？还是统一更新？
 	//临时实体控制
@@ -69,8 +90,7 @@ void EntityManager::tick(Data& data, const IGameState::GameSta nowSta, double dt
 		dy /= len;                           // 斜走不加速
 	}
 
-	size_t sta = (size_t)nowSta;
-	for (auto& e : entitys[sta]) {
+	for (auto& e : entitys_) {
 		e.vel = { dx * e.speed, dy * e.speed };
 		e.updateMove(dt);                    // 只传"时长"
 	}
@@ -79,4 +99,7 @@ void EntityManager::tick(Data& data, const IGameState::GameSta nowSta, double dt
 void EntityManager::initEntityManager()
 {
 	//？？？
+	entitys_.clear();
+	while (!freeList_.empty())freeList_.pop();
+	setoff.clear();
 }

@@ -3,8 +3,6 @@
 #include "../../dataStore.h"
 #include "../../buttonManager/button.h"
 #include "../../buttonManager/buttonID.h"
-//#include "../../entityManager/entity.h"
-//#include "../../entityManager/entityID.h"
 
 #include <iostream>
 
@@ -27,13 +25,22 @@ namespace HandleInput2 {
 }
 //目前这个HandleInput是直接复制粘贴，考虑提炼utils？
 
+const std::vector<Entity>& PuGame::getEntitys() const
+{
+    return entityManager_.commitEntitys();
+}
+
 void PuGame::onEnter(Data& data)
 {
     gameData_.initGameData();//或许需要世界信息？
+    entityManager_.initEntityManager();
+    entityManager_.registerEntitys(EntityID::testEntity);
 }
 
 void PuGame::onExit(Data& data)
 {
+    //测试
+    entityManager_.deleteEntitys(EntityID::testEntity);
 }
 
 void PuGame::onSuspend(Data& world)
@@ -60,6 +67,8 @@ void PuGame::tick(StateContext& ctx)
     if (HandleInput2::EscPuase(ctx.world, ctx.msgData))return;
 
     //游戏逻辑
+
+    //按钮判断
     for (const auto& btn : ctx.buttonList) {          // ← 用新路径
         if (!btn.isClicked) continue;
         switch (btn.status.ID) {
@@ -75,6 +84,34 @@ void PuGame::tick(StateContext& ctx)
         default: break;
         }
     }
+
+    //测试方块判定
+    for (auto& ety : entityManager_.commitEntitys()) {
+        if (ety.ID == EntityID::testEntity)
+        {
+            const auto& msgData = ctx.msgData;
+            float dx = 0.f;
+            float dy = 0.f;
+            if (IInputLayer::held(msgData.W)) dy -= 1.f;
+            if (IInputLayer::held(msgData.S)) dy += 1.f;
+            if (IInputLayer::held(msgData.A)) dx -= 1.f;
+            if (IInputLayer::held(msgData.D)) dx += 1.f;
+
+            if (dx != 0.f || dy != 0.f) {
+                const float len = std::sqrt(dx * dx + dy * dy);
+                dx /= len;
+                dy /= len;                           // 斜走不加速
+            }
+
+            ety.vel = { dx * ety.speed, dy * ety.speed };
+            ety.updateMove(ctx.world.getDeltaSec());                    // 只传"时长"
+        }
+    }
+}
+
+void PuGame::submitRender(RenderDataEntity& out)
+{
+    out.entitys_ = entityManager_.commitEntitys();
 }
 
 IGameState::GameSta PuGame::getID() const

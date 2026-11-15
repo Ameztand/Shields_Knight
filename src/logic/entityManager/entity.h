@@ -18,7 +18,7 @@ struct Entity {
     float right()   const { return pos.x + w * 0.5f; }
     float bottom()  const { return pos.y + h * 0.5f; }
 
-    void updateMove(float dt) {
+    void updateMove(const float dt) {
         pos = pos + vel * dt;            // ← 只动一个东西
     }
 };

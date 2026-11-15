@@ -151,8 +151,8 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
         
 
         //临时借用渲染实体
-        if (!renderData.entitys_[staID].empty()) {
-            for (const auto& ety : renderData.entitys_[staID])
+        if (!renderData.entitys_[staID].entitys_.empty()) {
+            for (const auto& ety : renderData.entitys_[staID].entitys_)
             {
                 sf::RectangleShape shape({ ety.w, ety.h });
                 shape.setPosition({ ety.left(), ety.top() });   // 中心 → 左上角

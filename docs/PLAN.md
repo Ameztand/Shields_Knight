@@ -1,71 +1,44 @@
-# Shields_Knight 版本记录与待办
+# PLAN 待办
 
-## 版本记录
-
-| 版本 | 内容 | 关键决定 |
-|---|---|---|
-| V0.0.0 | 初始化项目与基础架构 | — |
-| V0.0.1 | 输入重构 | `IInputLayer` 抽象 + 五态 `KeySta` + 事件转快照 |
-| V0.0.2 | 时间组块 | `TimeClock` 保留接口；渲染像素由 `main` 传入 |
-| V0.1.0 | 逻辑层 | 状态机 + 按钮表驱动 + 数据黑板；主循环接上 tick / render |
-| V0.1.0.1 | 文档与构建校准 | 接入 CMake；README / PLAN / DEVLOG 调整结构 |
-| V0.1.0.2 | 分离 `Window` | 加入 `sf::View` 与 letterbox；MinGW / MSVC 双工具链 |
-| V0.1.0.3 | `fit` 重写 | `zoom.h` → `fit.h`，`FitResult` 改为承载 center / size / pos |
-| V0.1.0.4 | 背景与贴图占位 | 背景按状态切换；按钮贴图占位；时间戳打通 |
-| V0.1.0.5 | 引入 `StateContext` | 状态 `tick` 改吃每帧上下文，为后续拆 `Data` 铺路 |
-| V0.1.0.6 | 生命周期四事件 + 实体子系统骨架 | 状态机加 onSuspend/onResume；拆 PuGame；实体走按状态注册（更新未接）；CMakePresets 改 SFML_DIR |
-| V0.1.0.7 | 第一个可操作循环 | 实体 WASD 移动；dt 由 Logic 中央计算；坐标 int→float；禁用输入法 |
+> 只放还没做的事；完成即删。
+> 为什么 / 否决 / 踩坑 → `DEVLOG.md`；版本号 / 时间线 → `VERSION.md`；规则 → `CONVENTION.md`。
+> 状态：`已到` = 现在能做；`未触发` = 等条件。线：`主` = 推进游戏；`支` = 旁支。
+> 新行模板：`| 已到 | 支 | 事项 | 触发条件 / 判据 |`
 
 ## 待办
 
-### 主线
+| 状态 | 线 | 事项 | 触发条件 / 判据 |
+|---|---|---|---|
+| 已到 | 主 | **第二个单位 + 选中** | 设计先答：怎么选中、按什么查（ID / 屏幕坐标 / 格子） |
+| 未触发 | 主 | 收窄渲染契约：`Config` 运行时结构 + 适配器 + `drawLayer` + 纹理缓存 + 实体帧表 | 要给实体贴图，或要播动画 |
+| 未触发 | 主 | 让数据离开代码：JSON 读取 + 校验 + 失败回退 + 手动重载 | 有 3~4 样东西的位置要反复调 |
+| 已到 | 支 | [缺陷] 死槽不渲染：`submitRender` 出口过滤 + `Entity::isAlive()` | 现状：死掉的单位仍会被画出来 |
+| 已到 | 支 | [缺陷] 按钮贴图每帧重读（2.8MB PNG，仅大厅开始按钮） | `Renderer::renderButton` 内声明局部 `sf::Texture` 并 `loadFromFile` |
+| 已到 | 支 | [缺陷] 绘制区比命中区大 30%（仅大厅开始按钮） | `fitApply(res, 1.3f)`：命中 200×80，绘制约 260×104 |
+| 已到 | 支 | [缺陷] 背景按「栈底是不是 Lobby」猜 | `Renderer::renderBackground` 的 `front() == Lobby` |
+| 已到 | 支 | [缺陷] 设计分辨率硬编码三处 | `fit.h` 的 `FitResult::center`、`common.h` 的 `BackgroundRect`、`config_design_view.h` |
+| 已到 | 支 | [缺陷] 长按阈值与业务耦合：点击只认 `Falling`，`DownL` 无消费者 | `ButtonManager::tick` |
+| 已到 | 支 | [验证] 长悬停：跑一次 2s 悬停，确认 `isLongHover` 置位 | 时间戳已通，逻辑成立，未单独验证 |
+| 已到 | 支 | [验证] 覆盖层（Pause）进出后按钮仍可用 | 跑一遍 Pause 进出；旧判断“已被分格覆盖”待实跑复核 |
+| 已到 | 支 | 清理死代码（见下「清理候选」） | — |
+| 已到 | 支 | `commitEntitys()` 非 const 重载 → `entitiesMut()`，注明「可改元素、禁改容器」 | 改容器会破坏 `setoff` / `freeList_`，且不报错 |
+| 已到 | 支 | `HandleInput` / `HandleInput2` 去重；`getDeltaSec()`(double) → `updateMove(float)` 显式窄化 | — |
+| 未触发 | 支 | Select 左/中键接入语义（难度 / 返回） | 语义定下来；Pause 三键已接线，Select 右键已通、左/中未接 |
+| 未触发 | 支 | `StateContext` 字段改名 `world` → `frame` | 随「`Intend` 移出 `Data`」一起做 |
+| 未触发 | 支 | `Intend` 移出 `Data`（R3） | 出现「两个状态写同一意图但含义不同」 |
+| 未触发 | 支 | 能力门控表 + 仲裁管线 | 出现「同一对象在不同系统里被区别对待」 |
+| 未触发 | 支 | 按游戏模式拆 `GameData` + `src/logic/gameData/` | 第二个游戏模式出现 |
+| 未触发 | 支 | `submitRender` 参数由镜像改投影（只带 `pos` / `w` / `h` 一类） | `Entity` 长出 `hp` / `alive` / `animTime` |
+| 未触发 | 支 | `EntityManager` 加 `find` / `modify` | 出现「鼠标选中一个单位」 |
+| 未触发 | 支 | `registerEntitys(id)` → `spawn(EntityDef, Vec2 pos)` | 出现第二种单位 |
+| 未触发 | 支 | 设计分辨率收敛到单一来源 | 要改设计分辨率之前 |
+| 未触发 | 支 | 窗口缩放后鼠标命中的回归验证 | 有人报命中错位 |
 
-1. **收窄渲染契约**：`Config` 运行时结构 + 适配器 + 统一 `drawLayer` + 纹理缓存
-2. **让数据离开代码**：JSON 读取 + 校验 + 失败回退 + 手动重载
-3. **业务地基**：dt → 实体 → 第一段动画
+## 清理候选（死代码）
 
-顺序不可换：1 不做完，2 没有结构可填；2 不做完，3 的实体表无处可放。
-
-### 长期
-
-- Select / Pause 中间按钮接入语义
-- 覆盖层的按钮注册（依赖第 1 项里的 `syncButtonsWithStack`）
-- 窗口缩放后鼠标命中的回归验证
-- 死代码清理
-- 设计分辨率收敛到单一来源（目前三处硬编码）
-- `Data` 继续拆分：`Intend` 是否移出黑板
-
-## 现状与缺陷
-
-见 `README.md` 的「状态矩阵」「已知缺陷」。
-
-## 判断与取舍
-
-见 `docs/DIRECTION.md`，决策理由记入 `docs/DEVLOG.md`。
-
-## 待办（第二批）
-
-- [ ] 项目根加 `.editorconfig`：`charset = utf-8`（防止新建文件被存成 GBK）
-- [ ] `StateContext` 字段改名：`world` → `frame`
-      理由：`Data` 装的是「本帧输入 + 时间 + 意图」，不是世界状态；世界状态已独立为 `GameData`
-- [ ] `Intend` 移出 `Data`（R3）
-- [ ] 能力门控表 + 仲裁管线
-      触发条件：出现「同一对象在不同系统里被区别对待」的规则
-      挂载点：表由 `Logic` 持有；`collectView` 与输入处理是消费方
-      临时的裁决者：`Entity::alive`（领域状态，不是渲染决策）
-      参考形态：UE GameplayTags / Godot process_mode
-- [ ] 按游戏模式拆分 `GameData`（`PuGameData` / `AtGameData`…）+ `src/logic/gameData/` 目录
-      触发条件：第二个游戏模式出现。拆之前先看两者的真实共性，别提前抽基类
-- [ ] 死代码清理（见 README「死代码」表）
-
-
-- { 主任务 } 拆 `EntityManager`：实体搬进 `PuGameData`，渲染走 `collectView` + `ViewRect`
-      为什么是它：回合逻辑要写在 `PuGame::tick`，但实体住在 `EntityManager`（Logic 持有），
-      状态够不着自己的单位 —— **它挡在业务前面**
-      状态：触发条件已到（第一个实体实例存在），不再是条件性待办
-
-## 编码约束（与构建相关，勿删）
-
-- 源文件 UTF-8 无 BOM
-- 控制台输出只用 ASCII
-- 调试输出统一 `std::cout` + `std::endl`
+- [ ] `Intend::replaceLobby` / `pushLobby` — `dataStore.h`，定义后无调用者
+- [ ] `Button::isLongPress` — `button.h`，声明后从不赋值
+- [ ] `EntityManager::tick` — 无调用者（`PuGame::tick` 内联了移动逻辑）
+- [ ] `PuGame::getEntitys()` — 无调用者（渲染走 `submitRender`）
+- [ ] `Renderer::renderTEST` — 已不被 `render()` 调用，保留作参考
+- [ ] `buttonVisual.h` — 0 字节空文件

@@ -3,6 +3,7 @@
 #include <cstddef>   // ← 新增，size_t
 
 #include "../../include/context/stateContext.h"
+#include "../../include/type_render_entity.h"//临时引用
 
 class Data;
 
@@ -33,6 +34,7 @@ public:
     virtual void onSuspend(Data& world) = 0;
     virtual void onResume(Data& world) = 0;
     virtual void tick(StateContext& ctx) = 0;
+    virtual void submitRender(RenderDataEntity& out) = 0;
     virtual IGameState::GameSta getID() const = 0;
 };
 

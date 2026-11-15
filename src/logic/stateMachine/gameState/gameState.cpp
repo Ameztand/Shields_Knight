@@ -61,6 +61,10 @@ void Lobby::tick(StateContext& ctx)
     }
 }
 
+void Lobby::submitRender(RenderDataEntity& out)
+{
+}
+
 IGameState::GameSta Lobby::getID() const
 {
     return ID;
@@ -104,6 +108,10 @@ void Select::tick(StateContext& ctx)
             default: break;
         }
     }
+}
+
+void Select::submitRender(RenderDataEntity& out)
+{
 }
 
 IGameState::GameSta Select::getID() const
@@ -158,6 +166,10 @@ void Pause::tick(StateContext& ctx)
             default: break;
         }
     }
+}
+
+void Pause::submitRender(RenderDataEntity& out)
+{
 }
 
 IGameState::GameSta Pause::getID() const

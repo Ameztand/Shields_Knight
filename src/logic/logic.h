@@ -6,7 +6,6 @@
 #include "./dataStore.h"
 #include "./stateMachine/gameStateMachine.h"
 #include "./buttonManager/buttonManager.h"
-#include "./entityManager/entityManager.h"
 #include "../include/type_render_data.h"
 #include"../input/IInputLayer.h"
 
@@ -15,19 +14,18 @@ class Logic {
 private:
 	Data data;
 	ButtonManager buttonManager;
-	EntityManager entityManager;
 	State gameSta;
 	
 
-	//RenderData renderData;
+	RenderData renderData;
 
 	void onEnter();
 	void translateMsg();
 
 	void delCurButtons();
 	void regCurButtons();
-	void delCurEntitys();
-	void regCurEntitys();
+	//void delCurEntitys();
+	//void regCurEntitys();
 	void replaceSta(std::unique_ptr<IGameState> sta);
 	void pushSta(std::unique_ptr<IGameState> sta);
 	void popSta();
@@ -39,6 +37,7 @@ public:
 
 	void tick(const IInputLayer::MsgData& out, const double now);
 
+	void updateRenderData();
 	RenderData commitRenderData();//不要加const，为什么？
 
 	bool Exit();

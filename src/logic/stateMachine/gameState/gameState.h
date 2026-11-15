@@ -17,6 +17,7 @@ public:
     void onSuspend(Data& world) override;
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
+    void submitRender(RenderDataEntity& out) override;
     IGameState::GameSta getID() const override;
 };
 
@@ -32,6 +33,7 @@ public:
     void onSuspend(Data& world) override;
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
+    void submitRender(RenderDataEntity& out) override;
     IGameState::GameSta getID() const override;
 };
 
@@ -47,6 +49,7 @@ public:
     void onSuspend(Data& world) override;
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
+    void submitRender(RenderDataEntity& out) override;
     IGameState::GameSta getID() const override;
 };
 
