@@ -17,7 +17,7 @@ private:
 
 public:
 
-    const std::vector<Entity>& getEntitys() const;//临时直接返回
+    //const std::vector<Entity>& getEntitys() const;//临时直接返回
 
     void onEnter(Data& world)override;
     void onExit(Data& world) override;

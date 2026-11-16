@@ -1,6 +1,6 @@
 #pragma once
 
-enum class EntityID {
+enum class EntityKind {
 	Null,
 	testEntity
 };

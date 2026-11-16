@@ -1,43 +1,47 @@
 #include "entityManager.h"
 
-void EntityManager::registerEntitys(const EntityID id)
+int EntityManager::findIndex(const uint32_t id) const
+{
+	if (id <= 0) return -1;
+	auto it = setoff.find(id);
+	if (it != setoff.end()) return it->second;
+	return -1;
+}
+
+void EntityManager::registerEntitys(const EntityKind kind)
 {
 	//entitys_.clear();
 
 	//临时构造
-	Entity e;
-	e.ID = id;
-	e.pos = { 960.f, 540.f };              // 屏幕正中
-	e.vel = { 0.f, 0.f };
-	e.w = 100.f;
-	e.h = 100.f;
-	e.speed = 300.f;                         // 像素/秒
+	static constexpr Vec2 kSpawns[] = { {960.f, 540.f}, {100.f, 100.f} };
+	for (const Vec2 p : kSpawns) {
+		Entity e;
+		e.handle.id = ++id;          // ← 用你自己的计数器，别再写死
+		e.kind = kind;
+		e.pos = p;
+		e.vel = { 0.f, 0.f };
+		e.w = 100.f; e.h = 100.f; e.speed = 300.f;
 
-	//放入
-	int i = entitys_.size();
-	if (freeList_.empty())
-	{
-		entitys_.push_back(e);
+		int i = entitys_.size();
+		if (freeList_.empty()) entitys_.push_back(e);
+		else { i = freeList_.front(); freeList_.pop(); entitys_[i] = e; }
+		setoff[e.handle.id] = i;
 	}
-	else
-	{
-		i = freeList_.front();
-		freeList_.pop();
-		entitys_[i] = e;
-	}
-	setoff[e.ID] = i;//建立索引
+	//再调用一次，理应id不是1/2
 
 	//entitys_.push_back(e);//临时构造
+	//返回 handle.id ？
 }
 
-void EntityManager::deleteEntitys(const EntityID id)
+void EntityManager::deleteEntitys(const uint32_t id)
 {
+	if (id == 0)return;
 	auto it = setoff.find(id);
 	if (it != setoff.end()) 
 	{
 		int i = it->second;
 		freeList_.push(i);
-		entitys_[i].ID = EntityID::Null;
+		entitys_[i].kind = EntityKind::Null;
 		setoff.erase(id);
 		//return true;
 	}
@@ -49,50 +53,58 @@ const std::vector<Entity>& EntityManager::commitEntitys() const
 	return entitys_;
 }
 
-std::vector<Entity>& EntityManager::commitEntitys()
+const Entity& EntityManager::getEntity(const uint32_t id) const
 {
-	return entitys_;
+	if (id == 0)return Eentity;
+	auto it = setoff.find(id);
+	if (it != setoff.end())
+	{
+		int i = it->second;
+		return entitys_[i];
+	}
+	return Eentity;
 }
 
-void EntityManager::tick(Data& data, double dt)
+void EntityManager::setEntity(const Entity& ety, const uint32_t id)
 {
-	//?仲裁？还是统一更新？
-	//临时实体控制
-	const auto& msgData = data.getMsgData();
-
-	/*
-	size_t sta = (size_t)nowSta;
-	for (auto& ety : entitys[sta]) {
-
-		//临时运动检测代码
-		if (IInputLayer::held(msgData.W)) ety.Vy -= 2;
-		if (IInputLayer::held(msgData.S)) ety.Vy += 2;
-		if (IInputLayer::held(msgData.A)) ety.Vx -= 2;
-		if (IInputLayer::held(msgData.D)) ety.Vx += 2;
-
-		if (ety.Vx > 0) ety.Vx--; 
-		else if (ety.Vx < 0) ety.Vx++;
-		if (ety.Vy > 0) ety.Vy--;
-		else if (ety.Vy < 0) ety.Vy++;
-
-		ety.updateMove();
+	if (id == 0)return;
+	auto it = setoff.find(id);
+	if (it != setoff.end())
+	{
+		int i = it->second;
+		entitys_[i] = ety;
 	}
-	*/
-	float dx = 0.f, dy = 0.f;
-	if (IInputLayer::held(msgData.W)) dy -= 1.f;
-	if (IInputLayer::held(msgData.S)) dy += 1.f;
-	if (IInputLayer::held(msgData.A)) dx -= 1.f;
-	if (IInputLayer::held(msgData.D)) dx += 1.f;
+}
 
-	if (dx != 0.f || dy != 0.f) {
-		const float len = std::sqrt(dx * dx + dy * dy);
-		dx /= len;
-		dy /= len;                           // 斜走不加速
+void EntityManager::updateHover(const uint32_t id, const double dt)
+{
+	int i = findIndex(id);
+	if (i != -1)
+	{
+		//不判断是否为墓碑
+		entitys_[i].hoverTime += dt;
+		entitys_[i].isHovered = entitys_[i].hoverTime > 0;
+		entitys_[i].isLongHover = entitys_[i].hoverTime > entitys_[i].hoverThreshold;
 	}
+}
 
-	for (auto& e : entitys_) {
-		e.vel = { dx * e.speed, dy * e.speed };
-		e.updateMove(dt);                    // 只传"时长"
+void EntityManager::clearHover(const uint32_t id)
+{
+	int i = findIndex(id);
+	if (i != -1)
+	{
+		//不判断是否为墓碑
+		entitys_[i].hoverTime = 0;
+		entitys_[i].isHovered = entitys_[i].isLongHover = false;
+	}
+}
+
+void EntityManager::clearAllHover()
+{
+	for (auto& ety : entitys_) {
+		if (ety.kind == EntityKind::Null) continue;
+		ety.hoverTime = 0;
+		ety.isHovered = ety.isLongHover = false;
 	}
 }
 
@@ -102,4 +114,5 @@ void EntityManager::initEntityManager()
 	entitys_.clear();
 	while (!freeList_.empty())freeList_.pop();
 	setoff.clear();
+	id = 0;//牌号清空
 }

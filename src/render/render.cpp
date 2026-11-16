@@ -154,10 +154,41 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
         if (!renderData.entitys_[staID].entitys_.empty()) {
             for (const auto& ety : renderData.entitys_[staID].entitys_)
             {
+                if (ety.kind == EntityKind::Null) continue;//跳过墓碑
+
                 sf::RectangleShape shape({ ety.w, ety.h });
                 shape.setPosition({ ety.left(), ety.top() });   // 中心 → 左上角
-                shape.setFillColor(sf::Color::Red);
-                window.draw(shape);
+                sf::RectangleShape shapeBig({ (float)(ety.w * 1.1), (float)(ety.h * 1.1) });//硬凑，不用fit.h?
+                shapeBig.setPosition({ (float)(ety.left() - ety.w * 0.05), (float)(ety.top() - ety.h * 0.05) });   // 中心 → 左上角
+
+                //长悬停背景
+                if (ety.isLongHover)
+                {
+                    sf::RectangleShape shape2({ (float)(ety.w * 1.25), (float)(ety.h * 1.25) });//硬凑，不用fit.h?
+                    shape2.setPosition({ (float)(ety.left() - ety.w * 0.125), (float)(ety.top() - ety.h * 0.125) });   // 中心 → 左上角
+                    shape2.setFillColor(sf::Color::Red);
+                    window.draw(shape2);
+                }
+
+                //是否选择
+                if (ety.handle.id == renderData.entitys_[staID].selectedID_)
+                {
+                    shape.setFillColor(sf::Color::Yellow);//选择
+                    shapeBig.setFillColor(sf::Color::Yellow);//选择
+                }
+                else {
+                    shape.setFillColor(sf::Color::Red);
+                    shapeBig.setFillColor(sf::Color::Red);
+                }
+
+                //渲染
+                if (ety.isHovered && !ety.isLongHover)
+                {
+                    window.draw(shapeBig);
+                }
+                else {
+                    window.draw(shape);
+                }
             }
         }
     }

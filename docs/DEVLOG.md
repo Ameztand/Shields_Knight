@@ -132,6 +132,35 @@ PowerShell 里不需要 `/d`（本来就跨盘符）；路径有空格必须加�
 
 > 倒序，最新在上。只记"为什么"；"改了什么"见 `VERSION.md` 与 git。
 
+### V0.1.2 — 种类 / 实例 ID 分离
+
+> 改了什么见 `VERSION.md` 与 commit；这里只记为什么。
+
+#### 为什么把 `EntityID` 拆成 `EntityKind` + `EntityHandle`
+
+原 `EntityID` 的实际语义是"这是什么"（种类），却被 `setoff` 当成"这是哪一个"（实例）用：
+`std::unordered_map<EntityID, int>` 一张表只有一格，等于默认了「每种类最多一个实例」。
+注册第二个同种实体时 `setoff[id] = i` 直接覆盖，前一个槽既不会被 `deleteEntitys` 回收、`kind` 也还是活的——
+**泄漏槽继续被渲染、被命中，但表里查不到它**。往卡牌推进时这一步必然要拆（同名牌多张）。
+
+结论：**标量与序列走 `PuGameData`（选中 / 悬停 / 拖拽锚点），实例本体留在 `EntityManager` 的槽里，两边用 handle 当桥。**
+
+#### 踩坑：`Entity temp = manager.getEntity(id)` 是拷贝
+
+`getEntity` 返回 `const Entity&`，但声明成 `Entity temp` 就是拷贝初始化，改 `temp.pos` 改的是栈上的副本，
+池子一个字节没动。症状是「拖动完全没反应」，和「没写这段代码」长得一样；编译器只给一个「设了但没读」的警告。
+修法：拷贝出来 → 改 → `setEntity` 写回。`getEntity` / `setEntity` 必须成对。
+
+#### 踩坑：单位差 1000 倍
+
+`Data::getDeltaSec()` 是**秒**，而 `Entity::hoverThreshold` 当初按毫秒写 `200.0` → 长悬停要连续悬停 200 秒才亮。
+判据：**跨层传时间量时把单位写进变量名**（`dtSec` / `nowMs`），别靠注释——注释会过期。
+
+#### 踩坑：`assert` 在本工程里是空的
+
+`CMakeLists.txt` 强制 `Release`，`CMAKE_CXX_FLAGS_RELEASE` 自带 `-DNDEBUG` / `/DNDEBUG`（见 `build/*/CMakeCache.txt`），
+`assert` 整句被编掉、不报错。自检一律手写 `if (!cond) { std::cout << ... }`。
+
 ### V0.1.1 — 实体归状态持有
 
 > 改了什么见 `VERSION.md` 与 commit；这里只记为什么。
