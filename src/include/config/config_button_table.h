@@ -1,7 +1,7 @@
 #pragma once
 
 #include "include/common.h"
-#include "include/config_rect.h"
+#include "include/config/config_rect.h"
 #include "logic/stateMachine/gameStateKind.h"
 #include "logic/buttonManager/button.h"
 #include "logic/buttonManager/buttonID.h"

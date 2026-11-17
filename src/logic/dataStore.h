@@ -1,7 +1,7 @@
 #pragma once
 
 #include "include/common.h"
-#include "include/config_button_table.h"
+#include "include/config/config_button_table.h"
 #include "input/msgData.h"
 #include "logic/stateMachine/gameStateMachine.h"
 

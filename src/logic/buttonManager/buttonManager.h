@@ -3,7 +3,7 @@
 
 #include "include/common.h"
 #include "include/type_render_data.h"
-#include "include/config_rect.h"
+#include "include/config/config_rect.h"
 #include "input/msgData.h"
 #include "logic/buttonManager/button.h"
 #include "logic/buttonManager/buttonID.h"

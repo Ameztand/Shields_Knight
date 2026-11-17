@@ -6,7 +6,7 @@
 //#include <SFML/Graphics.hpp>
 
 #include "include/type_render_data.h"
-#include "include/screen.h"
+#include "include/veiw/screen.h"
 
 
 class Renderer{

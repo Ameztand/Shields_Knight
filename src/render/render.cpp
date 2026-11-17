@@ -10,7 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "include/fit.h"
+#include "include/veiw/fit.h"
 
 #include "logic/buttonManager/button.h"
 #include "logic/stateMachine/gameStateKind.h"
