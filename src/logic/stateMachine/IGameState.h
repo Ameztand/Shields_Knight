@@ -2,9 +2,10 @@
 
 #include <cstddef>   // ← 新增，size_t
 
-#include "include/context/stateContext.h"
-#include "include/type_render_entity.h"//临时引用
 #include "include/gameStateKind.h"
+#include "logic/contract/renderDataPu.h"
+#include "logic/contract/stateContext.h"//临时引用
+
 
 
 class Data;

@@ -5,8 +5,9 @@
 #include <SFML/Window/VideoMode.hpp>
 //#include <SFML/Graphics.hpp>
 
-#include "include/type_render_data.h"
+
 #include "include/veiw/screen.h"
+#include "logic/contract/renderData.h"
 
 
 class Renderer{

@@ -3,8 +3,8 @@
 
 //#include "common.h"
 
-#include "include/type_render_data.h"
 #include "input/msgData.h"
+#include "logic/contract/renderData.h"
 #include "logic/dataStore.h"
 #include "logic/stateMachine/gameStateMachine.h"
 #include "logic/buttonManager/buttonManager.h"
