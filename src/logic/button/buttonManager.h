@@ -8,7 +8,7 @@
 //#include "include/config/buttonTableRect.h"
 
 #include "input/msgData.h"
-#include "logic/buttonManager/button.h"
+#include "logic/button/button.h"
 #include "logic/dataStore.h"
 #include "logic/contract/renderData.h"
 

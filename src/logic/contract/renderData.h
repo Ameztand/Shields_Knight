@@ -3,7 +3,7 @@
 #include "include/common.h"
 #include "include/buttonKind.h"
 #include "include/gameStateKind.h"
-#include "logic/buttonManager/button.h"
+#include "logic/button/button.h"
 #include "logic/contract/renderDataPu.h"
 
 

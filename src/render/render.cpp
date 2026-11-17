@@ -12,7 +12,7 @@
 
 #include "include/veiw/fit.h"
 #include "include/gameStateKind.h"
-#include "logic/buttonManager/button.h"
+#include "logic/button/button.h"
 
 
 void Renderer::renderSetView(sf::RenderWindow &window, const Screen &screen)

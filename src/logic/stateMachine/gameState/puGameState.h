@@ -3,7 +3,7 @@
 #include "include/common.h"
 #include "logic/stateMachine/IGameState.h"
 #include "logic/gameData.h"
-#include "logic/entityManager/entityManager.h"
+#include "logic/entity/entityManager.h"
 
 #include <vector>
 

@@ -3,7 +3,7 @@
 #include <cstdint>//为了uint32_t
 
 #include "include/common.h"
-#include "logic/entityManager/entityKind.h"
+#include "logic/entity/entityKind.h"
 
 struct EntityHandle {                       // 是哪一个：池分配的号
     uint32_t id = 0;                        // 0 = 无效

@@ -3,8 +3,8 @@
 #include <cstdint>//为了uint32_t
 
 #include "include/common.h"
-#include "logic/entityManager/entity.h"
-#include "logic/entityManager/entityKind.h"
+#include "logic/entity/entity.h"
+//#include "logic/entity/entityKind.h"
 
 //#include "../../include/type_render_data.h"
 //#include "../../include/config_rect.h"

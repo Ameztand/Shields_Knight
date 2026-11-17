@@ -1,7 +1,7 @@
 #pragma once
 
-#include "logic/entityManager/entityKind.h"
-#include "logic/entityManager/entity.h"
+//#include "logic/entity/entityKind.h"
+#include "logic/entity/entity.h"
 
 #include <vector>
 #include <cstdint>//为了uint32_t

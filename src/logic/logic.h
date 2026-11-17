@@ -7,7 +7,7 @@
 #include "logic/contract/renderData.h"
 #include "logic/dataStore.h"
 #include "logic/stateMachine/gameStateMachine.h"
-#include "logic/buttonManager/buttonManager.h"
+#include "logic/button/buttonManager.h"
 
 
 
