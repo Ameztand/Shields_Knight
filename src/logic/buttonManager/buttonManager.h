@@ -2,9 +2,11 @@
 
 
 #include "include/common.h"
-#include "include/config/config_rect.h"
 #include "include/buttonKind.h"
 #include "include/gameStateKind.h"
+#include "include/config/buttonTable.h"
+//#include "include/config/buttonTableRect.h"
+
 #include "input/msgData.h"
 #include "logic/buttonManager/button.h"
 #include "logic/dataStore.h"

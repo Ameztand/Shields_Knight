@@ -1,14 +1,22 @@
 #pragma once
 
 #include "include/common.h"
-#include "include/config/config_rect.h"
-#include "include/gameStateKind.h"
 #include "include/buttonKind.h"
-#include "logic/buttonManager/button.h"
+#include "include/gameStateKind.h"
+#include "include/config/buttonTableRect.h"
+
 
 
 #include <cstddef>//size_t
 #include <array>
+
+struct ButtonConfig {
+    //不再const
+    Rect area;
+    ButtonID ID;
+	//const IGameState::GameSta belong;
+
+};
 
 //配置单状态按钮数组
 inline constexpr std::array<ButtonConfig, 1> kLobbyButtons {{ 

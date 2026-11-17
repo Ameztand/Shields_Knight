@@ -3,14 +3,9 @@
 #include "include/common.h"
 //#include "../stateMachine/IGameState.h"
 #include "include/buttonKind.h"
+#include "include/config/buttonTable.h"
 
-struct ButtonConfig {
-    //不再const
-    Rect area;
-    ButtonID ID;
-	//const IGameState::GameSta belong;
 
-};
 
 struct Button{
     ButtonConfig status;
