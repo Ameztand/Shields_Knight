@@ -4,6 +4,7 @@
 #include "../logic/entityManager/entity.h"
 
 #include <vector>
+#include <cstdint>//为了uint32_t
 
 struct RenderDataEntity {
 	std::vector<Entity> entitys_;

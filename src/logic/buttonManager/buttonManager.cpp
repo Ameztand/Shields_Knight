@@ -1,6 +1,6 @@
 #include "buttonManager.h"
 
-void ButtonManager::registerButtons(const IGameState::GameSta nowSta){
+void ButtonManager::registerButtons(const GameStateKind nowSta){
     size_t sta = (size_t)nowSta;
     auto& vec = buttons[sta];
     vec.clear();
@@ -11,7 +11,7 @@ void ButtonManager::registerButtons(const IGameState::GameSta nowSta){
     }  
 }
 
-void ButtonManager::deleteButtons(const IGameState::GameSta nowSta)
+void ButtonManager::deleteButtons(const GameStateKind nowSta)
 {
     buttons[(size_t)nowSta].clear();
 }
@@ -21,7 +21,7 @@ const std::array<std::vector<Button>, kStateCount> &ButtonManager::commitButtons
     return buttons;
 }
 
-void ButtonManager::tick(Data& data, const IGameState::GameSta nowSta){
+void ButtonManager::tick(Data& data, const GameStateKind nowSta){
     //轮询判断(只检查栈顶状态)
     size_t sta = (size_t)nowSta;
     auto& vec = buttons[sta];
@@ -46,11 +46,11 @@ void ButtonManager::tick(Data& data, const IGameState::GameSta nowSta){
         btn.isHovered = tempHoveredSta;
 
         //检查按下
-        btn.isClicked = btn.isHovered && (data.getMsgData().MouseL == IInputLayer::KeySta::Falling);
+        btn.isClicked = btn.isHovered && (data.getMsgData().MouseL == KeySta::Falling);
     }
 }
 
 void ButtonManager::initButtonManager()
 {
-    registerButtons(IGameState::GameSta::Lobby);
+    registerButtons(GameStateKind::Lobby);
 }

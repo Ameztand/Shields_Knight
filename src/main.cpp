@@ -46,7 +46,7 @@ int main() {
 
     std::cout << "程序正常退出。" << std::endl;
 
-    //Sleep(1000);
+    Sleep(1000);
 
     return 0;
 }

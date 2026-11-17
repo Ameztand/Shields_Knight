@@ -23,13 +23,13 @@ public:
 
     IGameState* getState();//获取当前状态机
 
-    const std::vector<IGameState::GameSta> getStaStack() const;
+    const std::vector<GameStateKind> getStaStack() const;
 
     bool empty() const;
 
     int getStaDepth() const;
 
-    IGameState::GameSta getStaID()const;
+    GameStateKind getStaID()const;
 
     void initGameSta(Data& data);
 };

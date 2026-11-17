@@ -3,6 +3,7 @@
 //#include <SFML/Graphics/RenderWindow.hpp>//???
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
+//#include <optional>
 
 //构造链接
 //Input::Input(){}
@@ -22,25 +23,25 @@ void Input::translate(const Screen& screen, std::optional<sf::Vector2i> mousePos
         switch (mode)
         {
         case 0b01: //刚按下
-            keySta_[i] = IInputLayer::KeySta::Falling;
+            keySta_[i] = KeySta::Falling;
             pressTime_[i] = now;
             break;
 
         case 0b11: //持续按住
         {//限制作用域
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - pressTime_[i]).count();
-            keySta_[i] = (duration >= LOW_PRESS_TIME) ? IInputLayer::KeySta::DownL : IInputLayer::KeySta::DownS;
+            keySta_[i] = (duration >= LOW_PRESS_TIME) ? KeySta::DownL : KeySta::DownS;
             break;
         }
             
         case 0b10: //刚释放
-            keySta_[i] = IInputLayer::KeySta::Rising;
+            keySta_[i] = KeySta::Rising;
             //时间要归零吗？
             break;
 
         case 0b00: //空闲
         default:
-            keySta_[i] = IInputLayer::KeySta::Null;
+            keySta_[i] = KeySta::Null;
             break;
         }
 
@@ -69,7 +70,7 @@ void Input::updateMsgData()
 {
     auto getSta = [this](sf::Keyboard::Key k) {
         int idx = static_cast<int>(k);
-        if (idx < 0 || idx >= KEY_COUNT) return IInputLayer::KeySta::Null;
+        if (idx < 0 || idx >= KEY_COUNT) return KeySta::Null;
         return keySta_[idx];
     };
 
@@ -125,7 +126,7 @@ void Input::onEvent(const sf::Event &event)
     }
 }
 
-const IInputLayer::MsgData &Input::getMsgData() const
+const MsgData &Input::getMsgData() const
 {
     return msgData;
 }

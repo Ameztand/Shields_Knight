@@ -5,6 +5,7 @@
 #include "../../buttonManager/buttonID.h"
 
 #include <iostream>
+#include <cmath>
 
 namespace HitTest {
     // 底：点 + 中心 + 尺寸
@@ -32,17 +33,15 @@ namespace HitTest {
 } // namespace HitTest
 
 namespace HandleInput2 {
-    bool EscPop(Data& world, const IInputLayer::MsgData& msgData)
+    bool EscPop(Data& world, const MsgData& msgData)
     {
-        using KeySta = IInputLayer::KeySta;
         bool temp = (msgData.Esc == KeySta::Falling);
         world.gameIntend.popSta = temp;
         return temp;
     }
 
-    bool EscPuase(Data& world, const IInputLayer::MsgData& msgData)
+    bool EscPuase(Data& world, const MsgData& msgData)
     {
-        using KeySta = IInputLayer::KeySta;
         bool temp = (msgData.Esc == KeySta::Falling);
         world.gameIntend.pushPause = temp;
         return temp;
@@ -120,13 +119,13 @@ void PuGame::tick(StateContext& ctx)
         {
             float dx = 0.f;
             float dy = 0.f;
-            if (IInputLayer::held(msgData.W)) dy -= 1.f;
-            if (IInputLayer::held(msgData.S)) dy += 1.f;
-            if (IInputLayer::held(msgData.A)) dx -= 1.f;
-            if (IInputLayer::held(msgData.D)) dx += 1.f;
+            if (MsgData::held(msgData.W)) dy -= 1.f;
+            if (MsgData::held(msgData.S)) dy += 1.f;
+            if (MsgData::held(msgData.A)) dx -= 1.f;
+            if (MsgData::held(msgData.D)) dx += 1.f;
 
             if (dx != 0.f || dy != 0.f) {
-                const float len = std::sqrt(dx * dx + dy * dy);
+                const float len = std::sqrt(dx * dx + dy * dy);//??
                 dx /= len;
                 dy /= len;                           // 斜走不加速
             }
@@ -141,7 +140,7 @@ void PuGame::tick(StateContext& ctx)
     }
 
     //方块选择
-    if (msgData.MouseL == IInputLayer::KeySta::Falling && msgData.MousePos != Epos)
+    if (msgData.MouseL == KeySta::Falling && msgData.MousePos != Epos)
     {
         gameData_.setID(0);// 先清空选中
         for (const auto& ety : entityManager_.commitEntitys()) {
@@ -157,12 +156,12 @@ void PuGame::tick(StateContext& ctx)
     }
 
     //检查拖动
-    if (msgData.MouseL == IInputLayer::KeySta::Falling && msgData.MousePos != Epos)
+    if (msgData.MouseL == KeySta::Falling && msgData.MousePos != Epos)
     {
         //gameData_.setCentre(msgData.MousePos);
         gameData_.setDownLID(gameData_.getID());
     }
-    else if ((msgData.MouseL == IInputLayer::KeySta::DownL || msgData.MouseL == IInputLayer::KeySta::DownS) && msgData.MousePos != Epos)
+    else if ((msgData.MouseL == KeySta::DownL || msgData.MouseL == KeySta::DownS) && msgData.MousePos != Epos)
     {
         //明天在做
         //if (gameData_.getID() == gameData_.getDownLID() && HitTest::contains(entityManager_.getEntity(gameData_.getDownLID(), msgData.MousePos))
@@ -179,7 +178,7 @@ void PuGame::tick(StateContext& ctx)
             gameData_.setCentre(msgData.MousePos);
         }
     }
-    else if (msgData.MouseL == IInputLayer::KeySta::Rising || !(msgData.MousePos != Epos))
+    else if (msgData.MouseL == KeySta::Rising || !(msgData.MousePos != Epos))
     {
         gameData_.setCentre(Epos);
         gameData_.setDownLID(0);
@@ -187,7 +186,7 @@ void PuGame::tick(StateContext& ctx)
 
     //检查悬停
     //没有处理鼠标出界问题？
-    if (!IInputLayer::held(msgData.MouseL) && msgData.MousePos != Epos)
+    if (!MsgData::held(msgData.MouseL) && msgData.MousePos != Epos)
     {
         //gameData_.setHoverID(0);
         for (const auto& ety : entityManager_.commitEntitys()) {
@@ -207,7 +206,7 @@ void PuGame::tick(StateContext& ctx)
     }
 
     //检查注册和删除
-    if (msgData.Alt == IInputLayer::KeySta::Falling)
+    if (msgData.Alt == KeySta::Falling)
     {
         //int i = gameData_.getID();
         //gameData_.setID((3 - i) % 3);
@@ -225,7 +224,7 @@ void PuGame::submitRender(RenderDataEntity& out)
     //if (gameData_.getHoverID() != 0) out.loogTimeHover_ = entityManager_.getEntity(gameData_.getHoverID()).isLongHover;
 }
 
-IGameState::GameSta PuGame::getID() const
+GameStateKind PuGame::getID() const
 {
     return ID;
 }

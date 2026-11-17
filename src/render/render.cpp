@@ -13,7 +13,7 @@
 #include "../include/fit.h"
 
 #include "../logic/buttonManager/button.h"
-#include "../logic/stateMachine/IGameState.h"
+#include "../logic/stateMachine/gameStateKind.h"
 
 void Renderer::renderSetView(sf::RenderWindow &window, const Screen &screen)
 {
@@ -92,7 +92,7 @@ void Renderer::renderBackground(sf::RenderWindow &window, const Screen& screen,c
 
     sf::Sprite sprite(texture);
     sf::Sprite sprite_null(texture_null);
-    if (!renderData.gameSta_.empty() && renderData.gameSta_.front() == IGameState::GameSta::Lobby) {
+    if (!renderData.gameSta_.empty() && renderData.gameSta_.front() == GameStateKind::Lobby) {
         FitResult backgroundFitResult = fitInto(sprite.getLocalBounds().size);
         FitTransform res = fitApply(backgroundFitResult);
         sprite.setScale(res.scale);

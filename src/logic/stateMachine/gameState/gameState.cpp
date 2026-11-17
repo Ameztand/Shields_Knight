@@ -6,17 +6,15 @@
 
 
 namespace HandleInput{
-    bool EscPop(Data& world, const IInputLayer::MsgData& msgData)
+    bool EscPop(Data& world, const MsgData& msgData)
     {
-        using KeySta = IInputLayer::KeySta;
         bool temp = (msgData.Esc == KeySta::Falling);
         world.gameIntend.popSta = temp;
         return temp;
     }
 
-    bool EscPuase(Data& world, const IInputLayer::MsgData& msgData)
+    bool EscPuase(Data& world, const MsgData& msgData)
     {
-        using KeySta = IInputLayer::KeySta;
         bool temp = (msgData.Esc == KeySta::Falling);
         world.gameIntend.pushPause = temp;
         return temp;
@@ -65,7 +63,7 @@ void Lobby::submitRender(RenderDataEntity& out)
 {
 }
 
-IGameState::GameSta Lobby::getID() const
+GameStateKind Lobby::getID() const
 {
     return ID;
 }
@@ -114,7 +112,7 @@ void Select::submitRender(RenderDataEntity& out)
 {
 }
 
-IGameState::GameSta Select::getID() const
+GameStateKind Select::getID() const
 {
     return ID;
 }
@@ -172,7 +170,7 @@ void Pause::submitRender(RenderDataEntity& out)
 {
 }
 
-IGameState::GameSta Pause::getID() const
+GameStateKind Pause::getID() const
 {
     return ID;
 }

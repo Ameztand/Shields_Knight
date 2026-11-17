@@ -37,9 +37,9 @@ IGameState* State::getState() {
     return stack.empty() ? nullptr : stack.back().get();
 }
 
-const std::vector<IGameState::GameSta> State::getStaStack() const
+const std::vector<GameStateKind> State::getStaStack() const
 {
-    std::vector<IGameState::GameSta> stackID;
+    std::vector<GameStateKind> stackID;
     stackID.reserve(stack.size());
     for(const auto& sta : stack){
         stackID.push_back(sta->getID());
@@ -55,8 +55,8 @@ int State::getStaDepth() const {
     return (int)stack.size();
 }
 
-IGameState::GameSta State::getStaID()const {
-    return (stack.empty()) ? IGameState::GameSta::null : stack.back()->getID();
+GameStateKind State::getStaID()const {
+    return (stack.empty()) ? GameStateKind::null : stack.back()->getID();
 }
 
 void State::initGameSta(Data& data)

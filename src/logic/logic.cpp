@@ -16,9 +16,6 @@ void Logic::onEnter()
 
 void Logic::translateMsg()
 {
-	//const IInputLayer::MsgData& out = data.getMsgData();
-	using KeySta = IInputLayer::KeySta;
-	
 	//data.gameIntend.isEsc = (out.Esc == KeySta::falling);
 	data.updateDebug(data.getMsgData().F1);
 	data.updateAlt(data.getMsgData().Alt);
@@ -44,7 +41,7 @@ void Logic::regCurButtons() {
 //}
 
 void Logic::replaceSta(std::unique_ptr<IGameState> sta) {
-	if(gameSta.getStaID() == IGameState::GameSta::Pause)popSta();//先退出暂停状态
+	if(gameSta.getStaID() == GameStateKind::Pause)popSta();//先退出暂停状态
 
     delCurButtons();
 	//delCurEntitys();
@@ -95,7 +92,7 @@ void Logic::clearIntend()
 	data.gameIntend = {};
 }
 
-void Logic::tick(const IInputLayer::MsgData& out, const double now)
+void Logic::tick(const MsgData& out, const double now)
 {
 	//获取数据写入黑板（还没写入时间）
 	data.pushMsgData(out);

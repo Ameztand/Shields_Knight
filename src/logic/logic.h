@@ -7,7 +7,7 @@
 #include "./stateMachine/gameStateMachine.h"
 #include "./buttonManager/buttonManager.h"
 #include "../include/type_render_data.h"
-#include"../input/IInputLayer.h"
+#include"../input/msgData.h"
 
 
 class Logic {
@@ -35,7 +35,7 @@ private:
 public:
 	Logic() { onEnter(); }//包含入场onEnter
 
-	void tick(const IInputLayer::MsgData& out, const double now);
+	void tick(const MsgData& out, const double now);
 
 	void updateRenderData();
 	RenderData commitRenderData();//不要加const，为什么？

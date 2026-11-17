@@ -2,7 +2,7 @@
 
 #include "common.h"
 #include "config_rect.h"
-#include "../logic/stateMachine/IGameState.h"
+#include "../logic/stateMachine/gameStateKind.h"
 #include "../logic/buttonManager/button.h"
 #include "../logic/buttonManager/buttonID.h"
 

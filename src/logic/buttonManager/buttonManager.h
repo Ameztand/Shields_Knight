@@ -5,8 +5,8 @@
 #include "../../include/common.h"
 #include "../../include/type_render_data.h"
 #include "../../include/config_rect.h"
-#include "../../input/IInputLayer.h"
-#include "../stateMachine/IGameState.h"
+#include "../../input/msgData.h"
+#include "../stateMachine/gameStateKind.h"
 #include "../dataStore.h"
 
 
@@ -18,13 +18,13 @@ private:
     std::array<std::vector<Button>, kStateCount> buttons;//全部按钮
 
 public:
-    void registerButtons(const IGameState::GameSta nowSta);
+    void registerButtons(const GameStateKind nowSta);
 
-    void deleteButtons(const IGameState::GameSta nowSta);
+    void deleteButtons(const GameStateKind nowSta);
 
     const std::array<std::vector<Button>, kStateCount>& commitButtons();
 
-    void tick(Data& data, const IGameState::GameSta nowSta);
+    void tick(Data& data, const GameStateKind nowSta);
 
     void initButtonManager();
 };

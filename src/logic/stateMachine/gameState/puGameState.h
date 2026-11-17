@@ -9,7 +9,7 @@
 
 class PuGame :public IGameState {
 private:
-    static constexpr IGameState::GameSta ID = IGameState::GameSta::PuGame;//关键词问题？
+    static constexpr GameStateKind ID = GameStateKind::PuGame;//关键词问题？
 
     PuGameData gameData_;
 
@@ -25,5 +25,5 @@ public:
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     void submitRender(RenderDataEntity& out) override;
-    IGameState::GameSta getID() const override;
+    GameStateKind getID() const override;
 };

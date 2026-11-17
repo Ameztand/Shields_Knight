@@ -2,7 +2,7 @@
 
 #include "../include/common.h"
 #include "../include/config_button_table.h"
-#include "../input/IInputLayer.h"
+#include "../input/msgData.h"
 #include "./stateMachine/gameStateMachine.h"
 
 #include <array>
@@ -10,12 +10,11 @@
 
 //虚拟按钮双缓存
 struct DoubleBool {
-	using KeySta = IInputLayer::KeySta;
 
 	bool res = false;
 	bool prve = false;
 
-	void update(const IInputLayer::KeySta out) {
+	void update(const KeySta out) {
 		bool purr = false;
 		if (out == KeySta::Falling) {
 			prve = !prve;
@@ -55,7 +54,6 @@ struct Intend {
 
 class Data {
 private:
-	using MsgData = IInputLayer::MsgData;
 	//using GameSta = IGameState::GameSta;
 
 	double now_ = 0;
@@ -91,15 +89,15 @@ public:
 
 	//按钮
 	void updataButtonSta(const std::array<std::vector<Button>, kStateCount>& buttons) { buttons_ = buttons; }
-	const std::vector<Button>& getButtonOf(const IGameState::GameSta sta) const { return buttons_[static_cast<size_t>(sta)]; }
+	const std::vector<Button>& getButtonOf(const GameStateKind sta) const { return buttons_[static_cast<size_t>(sta)]; }
 	//const std::array<std::vector<Button>, kStateCount>& getButtonAll() const { return buttons_; }
 
 	//Debug
-	void updateDebug(const IInputLayer::KeySta out){ F1_.update(out); }
+	void updateDebug(const KeySta out){ F1_.update(out); }
 	const bool getDebug(){ return F1_.get(); }
 
 	//ALt
-	void updateAlt(const IInputLayer::KeySta out){ Alt_.update(out); }
+	void updateAlt(const KeySta out){ Alt_.update(out); }
 	const bool getAlt(){ return Alt_.get(); }
 
 	//清理意图

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdint>
+#include "../include/common.h"
+
 class PuGameData {
 private:
 	int cnt_ = 0;//测试用例

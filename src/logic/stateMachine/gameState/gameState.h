@@ -8,7 +8,7 @@
 //大厅
 class Lobby :public IGameState {
 private:
-    const IGameState::GameSta ID= IGameState::GameSta::Lobby;
+    const GameStateKind ID= GameStateKind::Lobby;
     //ButtonPtr buttons;
 
 public:
@@ -18,13 +18,13 @@ public:
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     void submitRender(RenderDataEntity& out) override;
-    IGameState::GameSta getID() const override;
+    GameStateKind getID() const override;
 };
 
 //选择难度
 class Select :public IGameState {
 private:
-    const IGameState::GameSta ID = IGameState::GameSta::Select;
+    const GameStateKind ID = GameStateKind::Select;
     //ButtonPtr buttons;
 
 public:
@@ -34,13 +34,13 @@ public:
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     void submitRender(RenderDataEntity& out) override;
-    IGameState::GameSta getID() const override;
+    GameStateKind getID() const override;
 };
 
 //暂停
 class Pause :public IGameState {
 private:
-    const IGameState::GameSta ID = IGameState::GameSta::Pause;
+    const GameStateKind ID = GameStateKind::Pause;
     //ButtonPtr buttons;
 
 public:
@@ -50,7 +50,7 @@ public:
     void onResume(Data& world) override;
     void tick(StateContext& ctx)override;
     void submitRender(RenderDataEntity& out) override;
-    IGameState::GameSta getID() const override;
+    GameStateKind getID() const override;
 };
 
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>//为了uint32_t
+
 #include "entity.h"
 #include "entityKind.h"
 #include "../../include/common.h"
@@ -28,6 +30,7 @@ public:
     void deleteEntitys(const uint32_t id);
 
     const std::vector<Entity>& commitEntitys() const;
+    //template<class F> void forEachAlive(F&& f) const { for (auto& e : entitys_) if (e.kind != EntityKind::Null) f(e); }
     const Entity& getEntity(const uint32_t id) const;//getEntity 改成返回 const Entity*（找不到 nullptr）？？？减少哨兵Eentity?
     void setEntity(const Entity& ety, const uint32_t id);
 

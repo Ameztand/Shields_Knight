@@ -2,6 +2,7 @@
 
 #include <cstddef>   // ← 新增，size_t
 
+#include "gameStateKind.h"
 #include "../../include/context/stateContext.h"
 #include "../../include/type_render_entity.h"//临时引用
 
@@ -10,15 +11,6 @@ class Data;
 //========== 状态机 ==========
 class IGameState {
 public:
-    enum class GameSta {
-        null,
-        Lobby,
-        Select,
-        Pause,
-        PuGame,
-        COUNT//哨兵
-    };
-
     virtual ~IGameState() = default;
     // 入场/退场只碰世界状态：拿不到输入，也发不出意图
     // world退化为世界状态，不再承载输入输出数据流
@@ -35,7 +27,5 @@ public:
     virtual void onResume(Data& world) = 0;
     virtual void tick(StateContext& ctx) = 0;
     virtual void submitRender(RenderDataEntity& out) = 0;
-    virtual IGameState::GameSta getID() const = 0;
+    virtual GameStateKind getID() const = 0;
 };
-
-inline constexpr size_t kStateCount = static_cast<size_t>(IGameState::GameSta::COUNT);

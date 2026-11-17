@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>//为了uint32_t
+
 #include "../../include/common.h"
 //#include "../stateMachine/IGameState.h"
 #include "entityKind.h"
