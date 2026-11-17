@@ -1,6 +1,6 @@
 #pragma once  // 防止重复包含
 
-#include "../include/common.h"
+#include "include/common.h"
 
 enum class KeySta{
     Null,//悬空

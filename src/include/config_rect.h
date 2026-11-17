@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "include/common.h"
 
 inline constexpr Rect lobbystartButton({860,700}, 200, 80);
 inline constexpr Rect selectLeftButton({640,700}, 200, 80);

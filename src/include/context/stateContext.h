@@ -2,8 +2,7 @@
 
 #include <vector>
 
-//#include "../../logic/stateMachine/IGameState.h"
-#include"../../input/msgData.h"
+#include"input/msgData.h"
 
 class Data;   // 前置声明即可：这里只持有引用
 //class IInputLayer::MsgData;

@@ -2,7 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include "config_design_view.h"   // kDesignW / kDesignH，别再硬编码第三次
+#include "include/config_design_view.h"   // kDesignW / kDesignH，别再硬编码第三次
 
 struct Screen {
     sf::Vector2f design{kDesignW, kDesignH};

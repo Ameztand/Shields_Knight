@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "../include/common.h"
+#include "include/common.h"
 
 class PuGameData {
 private:

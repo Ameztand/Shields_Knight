@@ -1,8 +1,8 @@
 #include "gameState.h"
 
-#include "../../dataStore.h"
-#include "../../buttonManager/button.h"
-#include "../../buttonManager/buttonID.h"
+#include "logic/dataStore.h"
+#include "logic/buttonManager/button.h"
+#include "logic/buttonManager/buttonID.h"
 
 
 namespace HandleInput{

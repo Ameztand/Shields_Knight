@@ -1,11 +1,11 @@
 #include <windows.h>
 #include <iostream>
 
-#include "./input/input.h"
-#include "./render/render.h"
-#include "./include/utils/time_clock.h"
-#include "./logic/logic.h"
-#include "./platform/camera.h"
+#include "include/utils/time_clock.h"
+#include "input/input.h"
+#include "logic/logic.h"
+#include "render/render.h"
+#include "platform/camera.h"
 
 
 int main() {

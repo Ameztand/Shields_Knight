@@ -3,11 +3,12 @@
 
 //#include "common.h"
 
-#include "./dataStore.h"
-#include "./stateMachine/gameStateMachine.h"
-#include "./buttonManager/buttonManager.h"
-#include "../include/type_render_data.h"
-#include"../input/msgData.h"
+#include "include/type_render_data.h"
+#include "input/msgData.h"
+#include "logic/dataStore.h"
+#include "logic/stateMachine/gameStateMachine.h"
+#include "logic/buttonManager/buttonManager.h"
+
 
 
 class Logic {

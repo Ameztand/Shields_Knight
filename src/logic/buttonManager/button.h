@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../include/common.h"
+#include "include/common.h"
 //#include "../stateMachine/IGameState.h"
-#include "buttonID.h"
+#include "logic/buttonManager/buttonID.h"
 
 struct ButtonConfig {
     //不再const

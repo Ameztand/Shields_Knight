@@ -2,9 +2,10 @@
 
 #include <cstdint>//为了uint32_t
 
-#include "entity.h"
-#include "entityKind.h"
-#include "../../include/common.h"
+#include "include/common.h"
+#include "logic/entityManager/entity.h"
+#include "logic/entityManager/entityKind.h"
+
 //#include "../../include/type_render_data.h"
 //#include "../../include/config_rect.h"
 //#include "../stateMachine/IGameState.h"

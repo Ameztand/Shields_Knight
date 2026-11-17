@@ -1,7 +1,7 @@
 #pragma once  // 防止重复包含
 
-#include "../include/screen.h"
-#include "msgData.h"
+#include "include/screen.h"
+#include "input/msgData.h"
 
 #include <array>
 #include <chrono>

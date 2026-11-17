@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../IGameState.h"
-#include "../../../include/common.h"
-#include "../../gameData.h"
-#include "../../entityManager/entityManager.h"
+#include "include/common.h"
+#include "logic/stateMachine/IGameState.h"
+#include "logic/gameData.h"
+#include "logic/entityManager/entityManager.h"
 
 #include <vector>
 

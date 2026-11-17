@@ -1,7 +1,7 @@
 #include "gameStateMachine.h"
 
-#include "./gameState/gameState.h"
-#include "./gameState/puGameState.h"
+#include "logic/stateMachine/gameState/gameState.h"
+#include "logic/stateMachine/gameState/puGameState.h"
 
 void State::pushSta(Data& data, std::unique_ptr<IGameState> newState) {
     if (newState) {

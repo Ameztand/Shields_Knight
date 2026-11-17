@@ -2,7 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include "common.h"        // Rect
+#include "include/common.h"        // Rect
 
 // ===== 缩放策略 =====
 enum class FitPolicy {

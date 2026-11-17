@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../IGameState.h"
-#include "../../../include/common.h"
+#include "include/common.h"
+#include "logic/stateMachine/IGameState.h"
+
 
 #include <vector>
 

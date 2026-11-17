@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../include/common.h"
-#include "../include/config_button_table.h"
-#include "../input/msgData.h"
-#include "./stateMachine/gameStateMachine.h"
+#include "include/common.h"
+#include "include/config_button_table.h"
+#include "input/msgData.h"
+#include "logic/stateMachine/gameStateMachine.h"
 
 #include <array>
 #include <vector>

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common.h"
-#include "type_render_entity.h"
-#include "../logic/buttonManager/buttonID.h"
-#include "../logic/buttonManager/button.h"
-#include "../logic/stateMachine/gameStateKind.h"
+#include "include/common.h"
+#include "include/type_render_entity.h"
+#include "logic/buttonManager/buttonID.h"
+#include "logic/buttonManager/button.h"
+#include "logic/stateMachine/gameStateKind.h"
 
 #include <vector>
 

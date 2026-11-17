@@ -10,10 +10,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../include/fit.h"
+#include "include/fit.h"
 
-#include "../logic/buttonManager/button.h"
-#include "../logic/stateMachine/gameStateKind.h"
+#include "logic/buttonManager/button.h"
+#include "logic/stateMachine/gameStateKind.h"
 
 void Renderer::renderSetView(sf::RenderWindow &window, const Screen &screen)
 {

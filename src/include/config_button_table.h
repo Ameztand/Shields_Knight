@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common.h"
-#include "config_rect.h"
-#include "../logic/stateMachine/gameStateKind.h"
-#include "../logic/buttonManager/button.h"
-#include "../logic/buttonManager/buttonID.h"
+#include "include/common.h"
+#include "include/config_rect.h"
+#include "logic/stateMachine/gameStateKind.h"
+#include "logic/buttonManager/button.h"
+#include "logic/buttonManager/buttonID.h"
 
 #include <cstddef>//size_t
 #include <array>

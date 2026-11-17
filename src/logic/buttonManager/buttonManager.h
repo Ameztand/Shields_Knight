@@ -1,13 +1,14 @@
 #pragma once
 
-#include "button.h"
-#include "buttonID.h"
-#include "../../include/common.h"
-#include "../../include/type_render_data.h"
-#include "../../include/config_rect.h"
-#include "../../input/msgData.h"
-#include "../stateMachine/gameStateKind.h"
-#include "../dataStore.h"
+
+#include "include/common.h"
+#include "include/type_render_data.h"
+#include "include/config_rect.h"
+#include "input/msgData.h"
+#include "logic/buttonManager/button.h"
+#include "logic/buttonManager/buttonID.h"
+#include "logic/stateMachine/gameStateKind.h"
+#include "logic/dataStore.h"
 
 
 #include <array>
