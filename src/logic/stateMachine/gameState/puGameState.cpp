@@ -3,9 +3,10 @@
 #include <iostream>
 #include <cmath>
 
+#include "include/buttonKind.h"
 #include "logic/dataStore.h"
 #include "logic/buttonManager/button.h"
-#include "logic/buttonManager/buttonID.h"
+
 
 
 

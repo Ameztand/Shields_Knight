@@ -4,7 +4,7 @@
 
 #include "include/context/stateContext.h"
 #include "include/type_render_entity.h"//临时引用
-#include "logic/stateMachine/gameStateKind.h"
+#include "include/gameStateKind.h"
 
 
 class Data;

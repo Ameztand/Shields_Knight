@@ -2,7 +2,7 @@
 
 #include "include/common.h"
 //#include "../stateMachine/IGameState.h"
-#include "logic/buttonManager/buttonID.h"
+#include "include/buttonKind.h"
 
 struct ButtonConfig {
     //不再const

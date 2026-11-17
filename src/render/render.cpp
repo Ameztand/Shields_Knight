@@ -11,9 +11,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "include/veiw/fit.h"
-
+#include "include/gameStateKind.h"
 #include "logic/buttonManager/button.h"
-#include "logic/stateMachine/gameStateKind.h"
+
 
 void Renderer::renderSetView(sf::RenderWindow &window, const Screen &screen)
 {

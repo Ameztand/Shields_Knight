@@ -2,9 +2,10 @@
 
 #include "include/common.h"
 #include "include/type_render_entity.h"
-#include "logic/buttonManager/buttonID.h"
+#include "include/buttonKind.h"
+#include "include/gameStateKind.h"
 #include "logic/buttonManager/button.h"
-#include "logic/stateMachine/gameStateKind.h"
+
 
 #include <vector>
 
