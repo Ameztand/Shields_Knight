@@ -63,11 +63,7 @@ file(GLOB_RECURSE SHIELDS_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.c
 add_executable(Shields_Knight ${SHIELDS_SOURCES})
 
 target_include_directories(Shields_Knight PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/src/include
-    ${CMAKE_SOURCE_DIR}/src/input
-    ${CMAKE_SOURCE_DIR}/src/render
-    ${CMAKE_SOURCE_DIR}/src/logic)
+    ${CMAKE_SOURCE_DIR}/src)
 
 target_link_libraries(Shields_Knight PRIVATE
     SFML::Graphics
