@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(Shields_Knight
-        VERSION 0.1.1
+        VERSION 0.1.2.10
         DESCRIPTION "SFML 3.1 / C++17 desktop game shell"
         LANGUAGES CXX)
 
@@ -96,11 +96,18 @@ set(SFML_DLLS
     "${SFML_PREFIX}/bin/sfml-system-3.dll")
 
 add_custom_command(TARGET Shields_Knight POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy_directory
-            "${CMAKE_SOURCE_DIR}/pic" "$<TARGET_FILE_DIR:Shields_Knight>/pic"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
             ${SFML_DLLS} "$<TARGET_FILE_DIR:Shields_Knight>"
-    COMMENT "Copy pic/ and SFML runtime DLLs next to the exe")
+    COMMENT "Copy SFML runtime DLLs next to the exe")
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/pic")
+    add_custom_command(TARGET Shields_Knight POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+                "${CMAKE_SOURCE_DIR}/pic" "$<TARGET_FILE_DIR:Shields_Knight>/pic"
+        COMMENT "Copy pic/ next to the exe")
+else()
+    message(WARNING "pic/ 不存在：跳过美术资源拷贝，运行时会缺贴图")
+endif()
 
 message(STATUS "Shields_Knight: 编译器 = ${CMAKE_CXX_COMPILER_ID} | ${CMAKE_CXX_COMPILER}")
 message(STATUS "Shields_Knight: ${CMAKE_BUILD_TYPE} -> ${CMAKE_BINARY_DIR}/bin/Shields_Knight.exe")

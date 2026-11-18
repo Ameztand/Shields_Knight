@@ -11,17 +11,18 @@
 | V0.1.2.9 | 2026-11-19 | 结构重构（含 .1–.9）：`include/` 收敛为零依赖区；Manager→Store 正名；目录按「谁写它」重整 （事实上.1–.9每条都是独立的commit, 仅.9打tag） |
 | V0.1.2 | 2026-11-17 | 种类/实例 ID 分离（`EntityKind` + `EntityHandle`）；`getEntity`/`setEntity` 取代可变数组；选中 + 拖动 + 两级悬停 |
 | V0.1.1 | 2026-11-15 | 实体归状态持有；文档分家（PLAN / VERSION / DEVLOG / CONVENTION） |
-| V0.1.0.7 | 2026-11-14 | `1e948b5` WASD + dt + float；imm32；CMake VERSION 未跟 |
-| V0.1.0.6 | 2026-11-13 | `4cc9f5d` 生命周期四事件；拆 PuGame；实体骨架；DIRECTION 新增 |
-| V0.1.0.5 | 2026-11-01 | `8d572af` StateContext；tick 吃每帧上下文 |
-| V0.1.0.4 | 2026-11-01 | `3ecf49e` 背景按状态切换；按钮贴图占位；时间戳打通 |
-| V0.1.0.3 | 2026-11-01 | `74c129b` `zoom.h` → `fit.h`；`FitResult` 承载 center / size / pos |
-| V0.1.0.2 | 2026-10-26 | `a4f4c99` 分离 `Window`；`sf::View` + letterbox；双工具链 |
-| V0.1.0.1 | 2026-10-19 | `a1e09c4` 接入 CMake；README / PLAN / DEVLOG 拆分（原 `README_PLAN.md`） |
-| V0.1.0 | 2026-10-19 | `12587e3` 逻辑层：状态机 + 按钮表驱动 + 数据黑板 |
+| V0.1.0.7 | 2026-11-14 | `3e437c4` WASD + dt + float；imm32；CMake VERSION 未跟 |
+| V0.1.0.6 | 2026-11-13 | `3cd88d9` 生命周期四事件；拆 PuGame；实体骨架；DIRECTION 新增 |
+| V0.1.0.5 | 2026-11-01 | `89c36fe` StateContext；tick 吃每帧上下文 |
+| V0.1.0.4 | 2026-11-01 | `36225cb` 背景按状态切换；按钮贴图占位；时间戳打通 |
+| V0.1.0.3 | 2026-11-01 | `73aee5b` `zoom.h` → `fit.h`；`FitResult` 承载 center / size / pos |
+| V0.1.0.2 | 2026-10-26 | `cd7d016` 分离 `Window`；`sf::View` + letterbox；双工具链 |
+| V0.1.0.1 | 2026-10-19 | `9956094` 接入 CMake；README / PLAN / DEVLOG 拆分（原 `README_PLAN.md`） |
+| V0.1.0 | 2026-10-19 | `dd90217` 逻辑层：状态机 + 按钮表驱动 + 数据黑板 |
 | V0.0.2 | 2026-10-02 | `662fc6b` 时间组块 |
 | V0.0.1 | 2026-09-24 | `268486d` 输入重构 |
 | V0.0.0 | 2026-09-24 | `51820c3` 初始化项目与基础架构 |
 
-> 2026-10-19 的 `7621e00` 是 README 小改，不占版本号。
+> 2026-11-19 重写历史清除 pic/，此前哈希全部变更，本表已是重写后的值。
+> 2026-10-19 的 `c7bb7df` 是 README 小改，不占版本号。
 > `V0.1.0.1`–`V0.1.0.7` 当时都没有打 tag；按 `CONVENTION.md` §2 不追认、不补打，回退锚点用 commit。
