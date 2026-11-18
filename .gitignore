@@ -26,5 +26,5 @@ Release/
 Thumbs.db
 *.log
 
-# 5. 忽略部分美术资源
-pic/test*.png
+# 5. 忽略美术资源
+pic/
