@@ -95,3 +95,38 @@ V0.1.1 refactor(logic): 一句话主改动
 3. 本次有没有"未落地却写成现状"的句子？
 4. 否决 / 踩坑进 `DEVLOG.md` 了吗？过期条目从 `PLAN.md` 删了吗？
 5. 提交前 `git diff --cached --name-status` 对过了吗？build / docs / 资源有没有漏进 body？
+
+## 8 目录约定
+
+> 规则自 **V0.1.2.9** 起生效；判据与踩坑见 `DEVLOG.md` 同名手记。
+
+### 三条不变量
+
+1. **`include/` 是零依赖区。** 其中任何头只允许依赖：标准库、`SFML::System`、以及 `include/` 内部。禁止出现 `#include "logic/…"`、`"input/…"`、`"render/…"`、`"platform/…"`。
+2. **头文件必须自足。** 每个 `.h` 单独编得过（自己 include 自己用到的每一个类型）。`.cpp` 可以靠传递。
+3. **跨目录 include 一律从 `src` 起算**（`-I ${CMAKE_SOURCE_DIR}/src` 已就位）；同目录/子目录可用短名。不要再写 `../`。
+
+### 目录与允许的依赖方向
+
+| 目录 | 干什么 | 允许 include |
+|---|---|---|
+| `src/include/` | 零依赖区：基础类型、闭集词表、编译期配置、视图换算 | 标准库、SFML::System、`include/` 内部 |
+| `src/input/` | SFML 事件 → `MsgData`（唯一产出者） | `include/` |
+| `src/platform/` | 窗口与 OS：建窗、resize、IME | `include/`、SFML::Graphics/Window |
+| `src/logic/` | 世界状态、状态机、意图结算 | `include/`、`input/msgData.h` |
+| `src/render/` | `RenderData` → 屏幕 | `include/`、`logic/contract/` |
+| `src/main.cpp` | 组装与主循环 | 全部 |
+
+**已知例外（仅此一条）**：投影化之前，`render.cpp` 允许 include `logic/button/button.h`——因为 `RenderData` 里装的是 `Button` 本体而非投影。见 `PLAN.md`「快照投影化」；那天这条例外一并删除。
+
+### 加文件前的三问
+
+1. **谁写它？** 只有一个写者 → 跟写者走；一个写者都没有（闭集词表/常量）→ `include/`。
+2. **它是不是"只由这一帧的物理输入决定"？** 是 → `input/msgData.h`。需要知道"现在是哪个状态"才能算出来 → 那是**意图**，归 `logic/`。
+3. **它依赖外部系统吗？** 依赖 SFML::Graphics / OS 的，永远不进 `include/`。
+
+### 命名
+
+- 名字是**名词**，不是角色：`ButtonStore` / `EntityStore` / `StateStack` / `Cache` 好；`Manager` / `Controller` / `Handler` 不写。
+- **同后缀必须同语义**：两个 `Store` 若一个是"唯一真相"、一个是"可重建的镜像"，就得有一个改名。
+- **文件名必须等于内容**：`camera.h` 装 `Window`、`renderDataPu.h` 装 `RenderDataEntity`，都算违例。由于历史原因，暂时豁免这两个例子。

@@ -1,9 +1,9 @@
-#include "buttonManager.h"
+#include "buttonStore.h"
 
-void ButtonManager::registerButtons(const GameStateKind nowSta){
+void ButtonStore::registerButtons(const GameStateKind nowSta){
     size_t sta = (size_t)nowSta;
-    auto& vec = buttons[sta];
-    vec.clear();
+    auto& vec = buttonList[sta];
+    //vec.clear();
 
     vec.reserve(kButtonTable[sta].size());
     for (const auto& btn : kButtonTable[sta]){
@@ -11,20 +11,20 @@ void ButtonManager::registerButtons(const GameStateKind nowSta){
     }  
 }
 
-void ButtonManager::deleteButtons(const GameStateKind nowSta)
+void ButtonStore::deleteButtons(const GameStateKind nowSta)
 {
-    buttons[(size_t)nowSta].clear();
+    buttonList[(size_t)nowSta].clear();
 }
 
-const std::array<std::vector<Button>, kStateCount> &ButtonManager::commitButtons()
+const std::array<std::vector<Button>, kStateCount> &ButtonStore::commitButtons()
 {
-    return buttons;
+    return buttonList;
 }
 
-void ButtonManager::tick(Data& data, const GameStateKind nowSta){
+void ButtonStore::tick(Data& data, const GameStateKind nowSta){
     //轮询判断(只检查栈顶状态)
     size_t sta = (size_t)nowSta;
-    auto& vec = buttons[sta];
+    auto& vec = buttonList[sta];
     for (auto& btn : vec) {
         //检查悬停
         bool tempHoveredSta = btn.status.area.contains(data.getMsgData().MousePos);
@@ -50,7 +50,7 @@ void ButtonManager::tick(Data& data, const GameStateKind nowSta){
     }
 }
 
-void ButtonManager::initButtonManager()
+void ButtonStore::initButtonStore()
 {
     registerButtons(GameStateKind::Lobby);
 }

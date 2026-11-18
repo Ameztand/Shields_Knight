@@ -6,7 +6,7 @@
 //#include <SFML/Graphics.hpp>
 
 
-#include "include/veiw/screen.h"
+#include "include/view/screen.h"
 #include "logic/contract/renderData.h"
 
 

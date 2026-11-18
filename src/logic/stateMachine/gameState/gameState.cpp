@@ -50,8 +50,8 @@ void Lobby::tick(StateContext& ctx)
     for (const auto& btn : ctx.buttonList ) {
         if (!btn.isClicked) continue;
 
-        switch (btn.status.ID) {
-            case ButtonID::lobbystartButton:
+        switch (btn.status.kind) {
+            case ButtonKind::lobbystartButton:
                 //选择难度
                 ctx.world.gameIntend.replaceSelect = true;
                 break;
@@ -72,9 +72,9 @@ GameStateKind Lobby::getID() const
 void Select::onEnter(Data& data)
 {
     //buttons.clear();
-    //buttons.emplace_back(selectLeftButton, ButtonID::selectLeftButton);
-    //buttons.emplace_back(selectMiddleButton, ButtonID::selectMiddleButton);
-    //buttons.emplace_back(selectRightButton, ButtonID::selectRightButton);
+    //buttons.emplace_back(selectLeftButton, ButtonKind::selectLeftButton);
+    //buttons.emplace_back(selectMiddleButton, ButtonKind::selectMiddleButton);
+    //buttons.emplace_back(selectRightButton, ButtonKind::selectRightButton);
 }
 
 void Select::onExit(Data& data)
@@ -99,8 +99,8 @@ void Select::tick(StateContext& ctx)
     for (const auto& btn : ctx.world.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
-        switch (btn.status.ID) {
-            case ButtonID::selectRightButton:
+        switch (btn.status.kind) {
+            case ButtonKind::selectRightButton:
                 //进入PU
                 ctx.world.gameIntend.replacePuGame = true;
                 break;
@@ -121,9 +121,9 @@ GameStateKind Select::getID() const
 void Pause::onEnter(Data& data)
 {
     //buttons.clear();
-    //buttons.emplace_back(pauseLeftButton, ButtonID::pauseLeftButton);
-    //buttons.emplace_back(pauseMiddleButton, ButtonID::pauseMiddleButton);
-    //buttons.emplace_back(pauseRightButton, ButtonID::pauseRightButton);
+    //buttons.emplace_back(pauseLeftButton, ButtonKind::pauseLeftButton);
+    //buttons.emplace_back(pauseMiddleButton, ButtonKind::pauseMiddleButton);
+    //buttons.emplace_back(pauseRightButton, ButtonKind::pauseRightButton);
 }
 
 void Pause::onExit(Data& data)
@@ -147,18 +147,18 @@ void Pause::tick(StateContext& ctx)
     for (const auto& btn : ctx.world.getButtonOf(getID())) {
         if (!btn.isClicked) continue;
 
-        switch (btn.status.ID) {
-            case ButtonID::pauseLeftButton:
+        switch (btn.status.kind) {
+            case ButtonKind::pauseLeftButton:
                 //继续游戏
                 ctx.world.gameIntend.popSta = true;
                 break;
 
-            case ButtonID::pauseMiddleButton:
+            case ButtonKind::pauseMiddleButton:
                 //重新开始
                 ctx.world.gameIntend.restartPuGame = true;
                 break;
 
-            case ButtonID::pauseRightButton:
+            case ButtonKind::pauseRightButton:
                 //返回大厅
                 ctx.world.gameIntend.backLobby = true;
                 break;  

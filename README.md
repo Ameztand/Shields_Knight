@@ -53,29 +53,39 @@ build\mingw\bin\Shields_Knight.exe
 ## 目录
 ```
 src/
-├─ main.cpp               主循环：poll → Exit 判定 → tick → 提交快照 → render
-├─ input/                 输入层：SFML 事件 → 五态 KeySta 快照；鼠标并入同一套判定
-├─ platform/              Window：建窗口、收 resize、供鼠标像素坐标；Win32 侧禁输入法
-├─ render/                渲染层：View 与 letterbox、背景、按钮、实体框
-├─ logic/                 逻辑层
-│  ├─ dataStore.h         黑板：MsgData / 时间戳与 dt / 按钮快照 / 意图
-│  ├─ gameData.h          PuGameData：单个游戏模式的游戏数据
-│  ├─ logic.h|cpp         调度：输入 → 按钮 → 状态机 → 意图结算 → 提交快照
-│  ├─ buttonManager/      按钮适配（表驱动，按状态查 kButtonTable）
-│  ├─ entityManager/      实体表（Entity 为 POD）+ 槽位复用；由状态持有
-│  └─ stateMachine/
-│     ├─ gameStateMachine.h|cpp  栈式状态机：push / pop / replace
-│     └─ gameState/             Lobby / Select / Pause / PuGame
-└─ include/               配置与共享类型
-   ├─ common.h              坐标和矩形区域的声明
-   ├─ config_design_view.h  世界分辨率
-   ├─ config_rect.h         按钮区域
-   ├─ config_button_table.h 状态 → 按钮表
-   ├─ screen.h              像素 ↔ 设计坐标、缩放与黑边
-   ├─ fit.h                 缩放策略（Cover / Contain / Stretch）
-   ├─ type_render_data.h    渲染快照
-   ├─ type_render_entity.h  提交给渲染的实体数据
-   └─ context/stateContext.h 帧中段上下文
+├─ main.cpp                 主循环：poll → Exit 判定 → tick → 提交快照 → render
+├─ include/                 零依赖区：只依赖标准库与 SFML::System
+│  ├─ common.h              Vec2 / Position / Rect / Epos / Erect
+│  ├─ buttonKind.h          按钮闭集 ID（配置表的键）
+│  ├─ gameStateKind.h       状态闭集 ID + kStateCount
+│  ├─ config/               编译期配置数据
+│  │  ├─ buttonTable.h      ButtonConfig + kButtonTable（状态 → 按钮表）
+│  │  ├─ buttonTableRect.h  各按钮的区域
+│  │  └─ designView.h       世界分辨率 1920×1080
+│  ├─ view/                 像素 ↔ 设计坐标
+│  │  ├─ screen.h           Screen：缩放、黑边、toDesign
+│  │  └─ fit.h              缩放策略 Cover / Contain / Stretch
+│  └─ utils/
+│     └─ time_clock.h       steady_clock 毫秒时间源
+├─ input/                   输入层
+│  ├─ msgData.h             KeySta / MsgData / held()：纯数据，不含 SFML
+│  └─ input.h|cpp           Input：五态判定 + 鼠标坐标映射
+├─ platform/                窗口层
+│  └─ camera.h|cpp          class Window（文件名待改 window.*；Win32 侧禁输入法）
+├─ render/                  渲染层：只读 RenderData
+│  └─ render.h|cpp          View/letterbox、背景、按钮、实体框
+└─ logic/                   逻辑层
+   ├─ logic.h|cpp           调度：输入 → 按钮 → 状态机 → 意图结算 → 提交快照
+   ├─ dataStore.h           黑板：时间戳与 dt / 消息 / 按钮快照 / 意图
+   ├─ gameData.h            PuGameData：单个游戏模式的游戏数据
+   ├─ button/               Button（运行期态）+ ButtonStore（表驱动派生）
+   ├─ entity/               Entity（POD）+ EntityStore（槽位复用，由状态持有）
+   ├─ stateMachine/         GameStateMachine（push/pop/replace）+ IGameState
+   │  └─ gameState/         Lobby / Select / Pause / PuGame
+   └─ contract/             快照与帧上下文——render 唯一可见的 logic 目录
+      ├─ renderData.h       RenderData（一帧渲染快照）
+      ├─ renderDataPu.h     RenderDataEntity（实体快照）
+      └─ stateContext.h     StateContext（帧中段上下文）
 ```
 
 ---

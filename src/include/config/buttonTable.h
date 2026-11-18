@@ -13,27 +13,27 @@
 struct ButtonConfig {
     //不再const
     Rect area;
-    ButtonID ID;
+    ButtonKind kind;
 	//const IGameState::GameSta belong;
 
 };
 
 //配置单状态按钮数组
 inline constexpr std::array<ButtonConfig, 1> kLobbyButtons {{ 
-    { lobbystartButton , ButtonID::lobbystartButton }
+    { lobbystartButton , ButtonKind::lobbystartButton }
 }};
 inline constexpr std::array<ButtonConfig, 3> kSelectButtons {{ 
-    {selectLeftButton ,ButtonID::selectLeftButton},
-    {selectMiddleButton, ButtonID::selectMiddleButton}, 
-    {selectRightButton, ButtonID::selectRightButton} 
+    {selectLeftButton ,ButtonKind::selectLeftButton},
+    {selectMiddleButton, ButtonKind::selectMiddleButton}, 
+    {selectRightButton, ButtonKind::selectRightButton} 
 }};
 inline constexpr std::array<ButtonConfig, 3> kPauseButtons {{ 
-    {pauseLeftButton, ButtonID::pauseLeftButton},
-    {pauseMiddleButton, ButtonID::pauseMiddleButton}, 
-    {pauseRightButton, ButtonID::pauseRightButton} 
+    {pauseLeftButton, ButtonKind::pauseLeftButton},
+    {pauseMiddleButton, ButtonKind::pauseMiddleButton}, 
+    {pauseRightButton, ButtonKind::pauseRightButton} 
 }};
 inline constexpr std::array<ButtonConfig, 1> kPuGameButtons{ {
-    { puGameTestButton, ButtonID::puGameTestButton }
+    { puGameTestButton, ButtonKind::puGameTestButton }
 } };
 
 //按钮矩阵

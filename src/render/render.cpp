@@ -10,7 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "include/veiw/fit.h"
+#include "include/view/fit.h"
 #include "include/gameStateKind.h"
 #include "logic/button/button.h"
 
@@ -120,7 +120,7 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
         if (!renderData.buttons_[staID].empty()) {
             for (const auto& btn : renderData.buttons_[staID])
             {
-                if (btn.status.ID == ButtonID::lobbystartButton)
+                if (btn.status.kind == ButtonKind::lobbystartButton)
                 {
                     sf::Texture texture_button;//static有生命周期问题
                     bool F = texture_button.loadFromFile("./pic/LobbyStartButton.png");

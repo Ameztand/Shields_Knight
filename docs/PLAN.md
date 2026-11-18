@@ -22,20 +22,25 @@
 | 已到 | 支 | [缺陷] 按钮贴图每帧重读（2.8MB PNG，仅大厅开始按钮） | `Renderer::renderButton` 内声明局部 `sf::Texture` 并 `loadFromFile` |
 | 已到 | 支 | [缺陷] 绘制区比命中区大 30%（仅大厅开始按钮） | `fitApply(res, 1.3f)`：命中 200×80，绘制约 260×104 |
 | 已到 | 支 | [缺陷] 背景按「栈底是不是 Lobby」猜 | `Renderer::renderBackground` 的 `front() == Lobby` |
-| 已到 | 支 | [缺陷] 设计分辨率硬编码三处 | `fit.h` 的 `FitResult::center`、`common.h` 的 `BackgroundRect`、`config_design_view.h` |
-| 已到 | 支 | [缺陷] 长按阈值与业务耦合：点击只认 `Falling`，`DownL` 无消费者 | `ButtonManager::tick` |
+| 已到 | 支 | [缺陷] 设计分辨率硬编码三处 | `include/view/fit.h` 的 `FitResult::center`、`include/common.h:71` 的 `BackgroundRect`、`include/config/designView.h` |
+| 已到 | 支 | [缺陷] 长按阈值与业务耦合：点击只认 `Falling`，`DownL` 无消费者 | `ButtonStore::tick` |
 | 已到 | 支 | [验证] 覆盖层（Pause）进出后按钮仍可用 | 跑一遍 Pause 进出；旧判断“已被分格覆盖”待实跑复核 |
 | 已到 | 支 | 清理死代码（见下「清理候选」） | — |
 | 已到 | 支 | `HandleInput` / `HandleInput2` 去重；`getDeltaSec()`(double) → `updateMove(float)` 显式窄化 | — |
+| 已到 | 支 | [缺陷] 按钮悬停用绝对差、实体用 `+= dt`：暂停期间按钮的长悬停仍会触发 | `buttonStore.cpp:34` vs `entityStore.cpp:85`；统一成 `hoverTime += dt` 后删 `Button::hoverStartTime`（方法论 11） |
+| 已到 | 支 | [缺陷] `Data::buttons_` 与 `StateContext::buttonList` 是同一事实的两条路径 | `logic.cpp:105` 每帧整份深拷贝；`gameState.cpp:99/147` 绕开 ctx 走黑板。删 `buttons_`/`updataButtonSta`/`getButtonOf` 后，`dataStore.h` 的头文件不自足也一并消失 |
+| 已到 | 支 | [清理] `platform/camera.*` 里是 `class Window`；`include/utils/` 只有一个头 | 各 1 处 include，随时可做 |
+| 未触发 | 支 | [清理] `contract/renderDataPu.h` 名字带 Pu，内容是通用的 `RenderDataEntity` | 出现第二个带实体的状态时 |
 | 未触发 | 支 | Select 左/中键接入语义（难度 / 返回） | 语义定下来；Pause 三键已接线，Select 右键已通、左/中未接 |
 | 未触发 | 支 | `StateContext` 字段改名 `world` → `frame` | 随「`Intend` 移出 `Data`」一起做 |
 | 未触发 | 支 | `Intend` 移出 `Data`（R3） | 出现「两个状态写同一意图但含义不同」 |
 | 未触发 | 支 | 能力门控表 + 仲裁管线 | 出现「同一对象在不同系统里被区别对待」 |
 | 未触发 | 支 | 按游戏模式拆 `GameData` + `src/logic/gameData/` | 第二个游戏模式出现 |
-| 未触发 | 支 | `submitRender` 参数由镜像改投影（只带 `pos` / `w` / `h` 一类） | `Entity` 长出 `hp` / `alive` / `animTime` |
+| 未触发 | 支 | `submitRender` 参数由镜像改投影（只带 `pos` / `w` / `h` 一类） | `Entity` 长出 `hp` / `alive` / `animTime` 。`RenderData` 不再 include `logic/button/button.h` 那天；红线：`render.cpp:15` 那行 include 消失 |
 | 未触发 | 支 | `registerEntitys(id)` → `spawn(EntityDef, Vec2 pos)` | 出现第二种单位 |
 | 未触发 | 支 | 设计分辨率收敛到单一来源 | 要改设计分辨率之前 |
 | 未触发 | 支 | 窗口缩放后鼠标命中的回归验证 | 有人报命中错位 |
+
 
 ## 清理候选（死代码）
 
@@ -43,5 +48,4 @@
 - [ ] `Button::isLongPress` — `button.h`，声明后从不赋值
 - [ ] `PuGame::getEntitys()` — 无调用者（渲染走 `submitRender`）
 - [ ] `Renderer::renderTEST` — 已不被 `render()` 调用，保留作参考
-- [ ] `buttonVisual.h` — 0 字节空文件
-- [ ] `EntityManager::clearAllHover()`（无调用者）和注释残片（selectedHoverID_ / loogTimeHover_ / setHoverID / getHoverID）
+- [ ] `EntityStore::clearAllHover()`（无调用者）和注释残片（selectedHoverID_ / loogTimeHover_ / setHoverID / getHoverID）

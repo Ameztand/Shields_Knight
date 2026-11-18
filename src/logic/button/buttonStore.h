@@ -16,9 +16,9 @@
 #include <array>
 #include <vector>
 
-class ButtonManager{
+class ButtonStore{
 private:
-    std::array<std::vector<Button>, kStateCount> buttons;//全部按钮
+    std::array<std::vector<Button>, kStateCount> buttonList;//全部按钮
 
 public:
     void registerButtons(const GameStateKind nowSta);
@@ -29,5 +29,5 @@ public:
 
     void tick(Data& data, const GameStateKind nowSta);
 
-    void initButtonManager();
+    void initButtonStore();
 };

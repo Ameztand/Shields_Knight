@@ -7,15 +7,15 @@
 #include "logic/contract/renderData.h"
 #include "logic/dataStore.h"
 #include "logic/stateMachine/gameStateMachine.h"
-#include "logic/button/buttonManager.h"
+#include "logic/button/ButtonStore.h"
 
 
 
 class Logic {
 private:
 	Data data;
-	ButtonManager buttonManager;
-	State gameSta;
+	ButtonStore buttons;
+	GameStateMachine stateStack;
 	
 
 	RenderData renderData;

@@ -3,7 +3,7 @@
 #include <cstddef>   // size_t
 
 enum class GameStateKind {
-    null,
+    Null,
     Lobby,
     Select,
     Pause,

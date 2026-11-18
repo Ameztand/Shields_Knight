@@ -3,7 +3,7 @@
 #include "include/common.h"
 //#include "../stateMachine/IGameState.h"
 #include "include/buttonKind.h"
-#include "include/config/buttonTable.h"
+#include "include/config/buttonTable.h"//为了ButtonConfig
 
 
 

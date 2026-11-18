@@ -54,40 +54,40 @@ namespace HandleInput2 {
 
 //const std::vector<Entity>& PuGame::getEntitys() const
 //{
-//    return entityManager_.commitEntitys();
+//    return entityStore_.commitEntitys();
 //}
 
 void PuGame::onEnter(Data& data)
 {
-    gameData_.initGameData();//或许需要世界信息？
-    entityManager_.initEntityManager();
-    entityManager_.registerEntitys(EntityKind::testEntity);
+    gameData.initGameData();//或许需要世界信息？
+    entityPool.initEntityStore();
+    entityPool.registerEntitys(EntityKind::testEntity);
     //临时搭建选择器
-    gameData_.setID(1);
+    gameData.setID(1);
 }
 
 void PuGame::onExit(Data& data)
 {
     //测试
-    //entityManager_.deleteEntitys(EntityKind::testEntity);
+    //entityStore_.deleteEntitys(EntityKind::testEntity);
 }
 
 void PuGame::onSuspend(Data& world)
 {
-    int temp = gameData_.getCnt();
+    int temp = gameData.getCnt();
     temp /= 2;
-    gameData_.setCnt(temp);
+    gameData.setCnt(temp);
     //printf("触发onSuspend，cnt减半，及cnt = %d\n", temp);//不知道为什么用不了，只能用endl强行刷新
-    std::cout << "onSuspend: cnt = " << gameData_.getCnt() << std::endl;   // ← 换成 cout + endl
+    std::cout << "onSuspend: cnt = " << gameData.getCnt() << std::endl;   // ← 换成 cout + endl
 }
 
 void PuGame::onResume(Data& world)
 {
-    int temp = gameData_.getCnt();
+    int temp = gameData.getCnt();
     temp += 1;
-    gameData_.setCnt(temp);
+    gameData.setCnt(temp);
     //printf("触发onResume，cnt加一，及cnt = %d\n", temp);
-    std::cout << "onResume: cnt = " << gameData_.getCnt() << std::endl;
+    std::cout << "onResume: cnt = " << gameData.getCnt() << std::endl;
 }
 
 void PuGame::tick(StateContext& ctx)
@@ -101,13 +101,13 @@ void PuGame::tick(StateContext& ctx)
     //按钮判断
     for (const auto& btn : ctx.buttonList) {          // ← 用新路径
         if (!btn.isClicked) continue;
-        switch (btn.status.ID) {
-        case ButtonID::puGameTestButton:
+        switch (btn.status.kind) {
+        case ButtonKind::puGameTestButton:
         {
-            int temp = gameData_.getCnt();
+            int temp = gameData.getCnt();
             std::cout << "test , cnt = " << temp <<  ", now = " << ctx.world.getNow()/1000 << std::endl;
             temp++;
-            gameData_.setCnt(temp);
+            gameData.setCnt(temp);
 
             break;
         }
@@ -116,9 +116,9 @@ void PuGame::tick(StateContext& ctx)
     }
 
     //测试方块判定
-    for (const auto& ety : entityManager_.commitEntitys()) {
+    for (const auto& ety : entityPool.commitEntitys()) {
         if (ety.kind == EntityKind::Null) continue;//跳过墓碑
-        if (ety.handle.id == gameData_.getID() )
+        if (ety.handle.id == gameData.getID() )
         {
             float dx = 0.f;
             float dy = 0.f;
@@ -138,21 +138,21 @@ void PuGame::tick(StateContext& ctx)
             temp.vel = { dx * ety.speed, dy * ety.speed };
             temp.updateMove(ctx.world.getDeltaSec());
 
-            entityManager_.setEntity(temp,temp.handle.id);
+            entityPool.setEntity(temp,temp.handle.id);
         }
     }
 
     //方块选择
     if (msgData.MouseL == KeySta::Falling && msgData.MousePos != Epos)
     {
-        gameData_.setID(0);// 先清空选中
-        for (const auto& ety : entityManager_.commitEntitys()) {
+        gameData.setID(0);// 先清空选中
+        for (const auto& ety : entityPool.commitEntitys()) {
             if (ety.kind == EntityKind::Null) continue;//跳过墓碑
             //卡牌实际情况考虑遍历手牌数组
             //遍历方向就是优先选取的卡牌
             if (HitTest::contains(ety, msgData.MousePos))
             {
-                gameData_.setID(ety.handle.id);
+                gameData.setID(ety.handle.id);
                 break;//有必要吗？
             }
         }
@@ -162,29 +162,29 @@ void PuGame::tick(StateContext& ctx)
     if (msgData.MouseL == KeySta::Falling && msgData.MousePos != Epos)
     {
         //gameData_.setCentre(msgData.MousePos);
-        gameData_.setDownLID(gameData_.getID());
+        gameData.setDownLID(gameData.getID());
     }
     else if ((msgData.MouseL == KeySta::DownL || msgData.MouseL == KeySta::DownS) && msgData.MousePos != Epos)
     {
         //明天在做
-        //if (gameData_.getID() == gameData_.getDownLID() && HitTest::contains(entityManager_.getEntity(gameData_.getDownLID(), msgData.MousePos))
-        if (gameData_.getID() == gameData_.getDownLID())
+        //if (gameData_.getID() == gameData_.getDownLID() && HitTest::contains(entityStore_.getEntity(gameData_.getDownLID(), msgData.MousePos))
+        if (gameData.getID() == gameData.getDownLID())
         {
             //if(gameData_.getCentre() != Epos)gameData_.setCentre(msgData.MousePos);
-            if (gameData_.getCentre() != Epos)
+            if (gameData.getCentre() != Epos)
             {
-                Entity temp = entityManager_.getEntity(gameData_.getDownLID());
-                temp.pos.x += msgData.MousePos.x - gameData_.getCentre().x;
-                temp.pos.y += msgData.MousePos.y - gameData_.getCentre().y;
-                entityManager_.setEntity(temp, gameData_.getDownLID());
+                Entity temp = entityPool.getEntity(gameData.getDownLID());
+                temp.pos.x += msgData.MousePos.x - gameData.getCentre().x;
+                temp.pos.y += msgData.MousePos.y - gameData.getCentre().y;
+                entityPool.setEntity(temp, gameData.getDownLID());
             }
-            gameData_.setCentre(msgData.MousePos);
+            gameData.setCentre(msgData.MousePos);
         }
     }
     else if (msgData.MouseL == KeySta::Rising || !(msgData.MousePos != Epos))
     {
-        gameData_.setCentre(Epos);
-        gameData_.setDownLID(0);
+        gameData.setCentre(Epos);
+        gameData.setDownLID(0);
     }
 
     //检查悬停
@@ -192,18 +192,18 @@ void PuGame::tick(StateContext& ctx)
     if (!MsgData::held(msgData.MouseL) && msgData.MousePos != Epos)
     {
         //gameData_.setHoverID(0);
-        for (const auto& ety : entityManager_.commitEntitys()) {
+        for (const auto& ety : entityPool.commitEntitys()) {
             if (ety.kind == EntityKind::Null) continue;//跳过墓碑
             //卡牌实际情况考虑遍历手牌数组
             //遍历方向就是优先选取的卡牌
             if (HitTest::contains(ety, msgData.MousePos))
             {
                 //gameData_.setHoverID(ety.handle.id);
-                entityManager_.updateHover(ety.handle.id, ctx.world.getDeltaSec());
+                entityPool.updateHover(ety.handle.id, ctx.world.getDeltaSec());
                 //break;//有必要吗？
             }
             else {
-                entityManager_.clearHover(ety.handle.id);
+                entityPool.clearHover(ety.handle.id);
             }
         }
     }
@@ -213,18 +213,18 @@ void PuGame::tick(StateContext& ctx)
     {
         //int i = gameData_.getID();
         //gameData_.setID((3 - i) % 3);
-        entityManager_.deleteEntitys(gameData_.getID());
-        entityManager_.registerEntitys(EntityKind::testEntity);
+        entityPool.deleteEntitys(gameData.getID());
+        entityPool.registerEntitys(EntityKind::testEntity);
     }
 }
 
 void PuGame::submitRender(RenderDataEntity& out)
 {
     //还没跳过墓碑
-    out.entitys_ = entityManager_.commitEntitys();
-    out.selectedID_ = gameData_.getID();
+    out.entitys_ = entityPool.commitEntitys();
+    out.selectedID_ = gameData.getID();
     //out.selectedHoverID_ = gameData_.getHoverID();
-    //if (gameData_.getHoverID() != 0) out.loogTimeHover_ = entityManager_.getEntity(gameData_.getHoverID()).isLongHover;
+    //if (gameData_.getHoverID() != 0) out.loogTimeHover_ = entityStore_.getEntity(gameData_.getHoverID()).isLongHover;
 }
 
 GameStateKind PuGame::getID() const

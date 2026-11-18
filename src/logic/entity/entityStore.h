@@ -16,7 +16,7 @@
 #include <vector>
 #include <unordered_map>
 
-class EntityManager {
+class EntityStore {
 private:
     uint32_t id = 0;//实体对象id，只增不减
 
@@ -39,5 +39,5 @@ public:
     void clearHover(const uint32_t id);
     void clearAllHover();
 
-    void initEntityManager();
+    void initEntityStore();
 };

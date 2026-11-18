@@ -8,6 +8,7 @@
 
 | 版本 | 日期 | 一句话 |
 |---|---|---|
+| V0.1.2.9 | 2026-11-19 | 结构重构（含 .1–.9）：`include/` 收敛为零依赖区；Manager→Store 正名；目录按「谁写它」重整 （事实上.1–.9每条都是独立的commit, 仅.9打tag） |
 | V0.1.2 | 2026-11-17 | 种类/实例 ID 分离（`EntityKind` + `EntityHandle`）；`getEntity`/`setEntity` 取代可变数组；选中 + 拖动 + 两级悬停 |
 | V0.1.1 | 2026-11-15 | 实体归状态持有；文档分家（PLAN / VERSION / DEVLOG / CONVENTION） |
 | V0.1.0.7 | 2026-11-14 | `1e948b5` WASD + dt + float；imm32；CMake VERSION 未跟 |

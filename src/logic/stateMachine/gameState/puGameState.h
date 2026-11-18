@@ -3,7 +3,7 @@
 #include "include/common.h"
 #include "logic/stateMachine/IGameState.h"
 #include "logic/gameData.h"
-#include "logic/entity/entityManager.h"
+#include "logic/entity/entityStore.h"
 
 #include <vector>
 
@@ -11,9 +11,9 @@ class PuGame :public IGameState {
 private:
     static constexpr GameStateKind ID = GameStateKind::PuGame;//关键词问题？
 
-    PuGameData gameData_;
+    PuGameData gameData;
 
-    EntityManager entityManager_;
+    EntityStore entityPool;
 
 public:
 

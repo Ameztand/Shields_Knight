@@ -9,9 +9,9 @@
 void Logic::onEnter()
 {
 	data.initData();
-	buttonManager.initButtonManager();
-	//entityManager.init
-	gameSta.initGameSta(data);
+	buttons.initButtonStore();
+	//entityStore.init
+	stateStack.initGameSta(data);
 }
 
 void Logic::translateMsg()
@@ -23,35 +23,35 @@ void Logic::translateMsg()
 }
 
 void Logic::delCurButtons() {
-    buttonManager.deleteButtons(gameSta.getStaID());
+    buttons.deleteButtons(stateStack.getStaID());
 }
 
 void Logic::regCurButtons() {
-    buttonManager.registerButtons(gameSta.getStaID());
+    buttons.registerButtons(stateStack.getStaID());
 }
 
 //void Logic::delCurEntitys() {
-//	entityManager.deleteEntitys(gameSta.getStaID(), EntityID::testEntity);
+//	entityStore.deleteEntitys(stateStack.getStaID(), EntityID::testEntity);
 //}
 //
 //void Logic::regCurEntitys() {
 //	const auto sta = gameSta.getStaID();
 //	//临时调用
-//	if (sta == IGameState::GameSta::PuGame) entityManager.registerEntitys(sta, EntityID::testEntity);
+//	if (sta == IGameState::GameSta::PuGame) entityStore.registerEntitys(sta, EntityID::testEntity);
 //}
 
 void Logic::replaceSta(std::unique_ptr<IGameState> sta) {
-	if(gameSta.getStaID() == GameStateKind::Pause)popSta();//先退出暂停状态
+	if(stateStack.getStaID() == GameStateKind::Pause)popSta();//先退出暂停状态
 
     delCurButtons();
 	//delCurEntitys();
-    gameSta.replaceSta(data, std::move(sta));
+    stateStack.replaceSta(data, std::move(sta));
     regCurButtons();
 	//regCurEntitys();
 }
 
 void Logic::pushSta(std::unique_ptr<IGameState> sta) {
-    gameSta.pushSta(data, std::move(sta));
+    stateStack.pushSta(data, std::move(sta));
     regCurButtons();
 	//regCurEntitys();
 }
@@ -59,7 +59,7 @@ void Logic::pushSta(std::unique_ptr<IGameState> sta) {
 void Logic::popSta() {
     delCurButtons();
 	//delCurEntitys();
-    gameSta.popSta(data);
+    stateStack.popSta(data);
 }
 
 void Logic::changeSta()
@@ -80,7 +80,7 @@ void Logic::changeSta()
 		replaceSta(std::make_unique<PuGame>());
 	}
 	else if (data.gameIntend.backLobby) {
-		while (!(gameSta.empty())) {
+		while (!(stateStack.empty())) {
 			popSta();
 		}
 		pushSta(std::make_unique<Lobby>());
@@ -100,12 +100,12 @@ void Logic::tick(const MsgData& out, const double now)
 	const float dt = static_cast<float>(data.getDeltaSec());
 	translateMsg();//多余？
 
-	buttonManager.tick(data, gameSta.getStaID());//按钮输入
-	//entityManager.tick(data, gameSta.getStaID(), dt);//临时实体控制
-	data.updataButtonSta(buttonManager.commitButtons());//临时按键输入写入黑板,方便状态机获取
+	buttons.tick(data, stateStack.getStaID());//按钮输入
+	//entityStore.tick(data, stateStack.getStaID(), dt);//临时实体控制
+	data.updataButtonSta(buttons.commitButtons());//临时按键输入写入黑板,方便状态机获取
 
-	if (auto* s = gameSta.getState()) {   // 空栈保护
-		StateContext ctx{ data , data.getMsgData() , buttonManager.commitButtons()[static_cast<size_t>(s->getID())]  };  // 有界上下文
+	if (auto* s = stateStack.getState()) {   // 空栈保护
+		StateContext ctx{ data , data.getMsgData() , buttons.commitButtons()[static_cast<size_t>(s->getID())]  };  // 有界上下文
 		s->tick(ctx);
 		//换栈前提交数据，或者换栈拖到下一帧？
 		updateRenderData();
@@ -122,14 +122,14 @@ void Logic::tick(const MsgData& out, const double now)
 
 void Logic::updateRenderData()
 {
-	renderData.buttons_ = buttonManager.commitButtons();
-	renderData.gameSta_ = gameSta.getStaStack();
-	renderData.gameStaDepth_ = gameSta.getStaDepth();
+	renderData.buttons_ = buttons.commitButtons();
+	renderData.gameSta_ = stateStack.getStaStack();
+	renderData.gameStaDepth_ = stateStack.getStaDepth();
 
 	renderData.debugPanel_ = data.getDebug();
 
-	//renderData.entitys_ = entityManager.commitEntitys();
-	gameSta.getState()->submitRender(renderData.entitys_[static_cast<size_t>(gameSta.getStaID())]);//应该遍历全部状态？
+	//renderData.entitys_ = entityStore.commitEntitys();
+	stateStack.getState()->submitRender(renderData.entitys_[static_cast<size_t>(stateStack.getStaID())]);//应该遍历全部状态？
 }
 
 // 数据流三条规则：
@@ -143,7 +143,7 @@ RenderData Logic::commitRenderData()
 
 bool Logic::Exit()
 {
-	return gameSta.empty();
+	return stateStack.empty();
 }
 
 bool Logic::resetTime()

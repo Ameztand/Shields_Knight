@@ -1,6 +1,6 @@
-#include "entityManager.h"
+#include "entityStore.h"
 
-int EntityManager::findIndex(const uint32_t id) const
+int EntityStore::findIndex(const uint32_t id) const
 {
 	if (id <= 0) return -1;
 	auto it = setoff.find(id);
@@ -8,7 +8,7 @@ int EntityManager::findIndex(const uint32_t id) const
 	return -1;
 }
 
-void EntityManager::registerEntitys(const EntityKind kind)
+void EntityStore::registerEntitys(const EntityKind kind)
 {
 	//entitys_.clear();
 
@@ -33,7 +33,7 @@ void EntityManager::registerEntitys(const EntityKind kind)
 	//返回 handle.id ？
 }
 
-void EntityManager::deleteEntitys(const uint32_t id)
+void EntityStore::deleteEntitys(const uint32_t id)
 {
 	if (id == 0)return;
 	auto it = setoff.find(id);
@@ -48,12 +48,12 @@ void EntityManager::deleteEntitys(const uint32_t id)
 	//return false;
 }
 
-const std::vector<Entity>& EntityManager::commitEntitys() const
+const std::vector<Entity>& EntityStore::commitEntitys() const
 {
 	return entitys_;
 }
 
-const Entity& EntityManager::getEntity(const uint32_t id) const
+const Entity& EntityStore::getEntity(const uint32_t id) const
 {
 	if (id == 0)return Eentity;
 	auto it = setoff.find(id);
@@ -65,7 +65,7 @@ const Entity& EntityManager::getEntity(const uint32_t id) const
 	return Eentity;
 }
 
-void EntityManager::setEntity(const Entity& ety, const uint32_t id)
+void EntityStore::setEntity(const Entity& ety, const uint32_t id)
 {
 	if (id == 0)return;
 	auto it = setoff.find(id);
@@ -76,7 +76,7 @@ void EntityManager::setEntity(const Entity& ety, const uint32_t id)
 	}
 }
 
-void EntityManager::updateHover(const uint32_t id, const double dt)
+void EntityStore::updateHover(const uint32_t id, const double dt)
 {
 	int i = findIndex(id);
 	if (i != -1)
@@ -88,7 +88,7 @@ void EntityManager::updateHover(const uint32_t id, const double dt)
 	}
 }
 
-void EntityManager::clearHover(const uint32_t id)
+void EntityStore::clearHover(const uint32_t id)
 {
 	int i = findIndex(id);
 	if (i != -1)
@@ -99,7 +99,7 @@ void EntityManager::clearHover(const uint32_t id)
 	}
 }
 
-void EntityManager::clearAllHover()
+void EntityStore::clearAllHover()
 {
 	for (auto& ety : entitys_) {
 		if (ety.kind == EntityKind::Null) continue;
@@ -108,7 +108,7 @@ void EntityManager::clearAllHover()
 	}
 }
 
-void EntityManager::initEntityManager()
+void EntityStore::initEntityStore()
 {
 	//？？？
 	entitys_.clear();

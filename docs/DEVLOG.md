@@ -24,8 +24,8 @@
 **2. 一个实例抽不出共性。** 等第二个实例出现再抽象。现在抽出来的"共性"，多半第一个实例的特例。
 
 **3. 派生数据 vs 权威数据 → 决定要不要 Manager。**
-- 派生（从输入 / 配置算出来，没有作者）→ 需要中心去算 → Manager 合理（`ButtonManager`）
-- 权威（游戏逻辑写进去）→ 作者自己持有（状态持有的 `EntityManager`）
+- 派生（从输入 / 配置算出来，没有作者）→ 需要中心去算 → Manager 合理（`ButtonStore`）
+- 权威（游戏逻辑写进去）→ 作者自己持有（状态持有的 `EntityStore`）
 - 给权威数据安排代理作者，就是"别扭"的来源
 
 ### B 数据流与边界
@@ -132,6 +132,53 @@ PowerShell 里不需要 `/d`（本来就跨盘符）；路径有空格必须加�
 
 > 倒序，最新在上。只记"为什么"；"改了什么"见 `VERSION.md` 与 git。
 
+### V0.1.2.1–.9 — 结构重构：目录按「谁写它」重整
+
+> 改了什么见 `VERSION.md` 与 git；这里只记为什么。
+
+#### 为什么按「谁写它」分，而不是按层或按文件类型
+
+**否决一：按调用方（层）分。** `common.h` 被 12 处引用、分属 4 个目录；按层放会让另外三层反向依赖它。`#include` 是文本包含，不是依赖承诺——**读者可以很多，作者通常只有一个**。
+
+**否决二：按文件类型分（声明 / 配置）。** `ButtonConfig` 同时是声明和配置，`Button` 同时是声明和运行期态，按类型分必然逼同一个概念横跨两处。`include/` 原来的病就是这么来的：`config_button_table.h` 为了一个 `size_t` 常量，去 include 一个满是虚函数的接口。
+
+**现行判据：先问「谁能改它」。** 唯一写者 → 跟写者走；无写者（闭集词表/常量）→ `include/`；需要知道"现在是哪个状态"才能算出来的 → 那是意图，归状态。
+
+#### 准入测试：`include/` 的资格是编出来的，不是聊出来的
+
+只给 `-I src/include` + SFML 路径，对每个头跑 `g++ -fsyntax-only -x c++`，编得过才有资格进 `include/`。这把"该不该放这"从判断题变成执行题——`renderData.h` 就是被这条挡在门外的（它认识 `Button` / `Entity`）。
+
+#### 踩坑：`IInputLayer` 不是接口，是命名空间
+
+- 全仓库 **0 处** `IInputLayer&/*`（虚表一次没被用过），却有 **40 处** `IInputLayer::KeySta` 这类限定名。
+- 它是 logic 层唯一的 SFML 泄漏源：`logic.h → dataStore.h → IInputLayer.h → screen.h → SFML`。拆出 `input/msgData.h` 后，`logic.cpp` 只给 `-Isrc` 就能编过。
+- 结论：**数据契约要独立成头**，别寄居在一个用不上的接口里。接口留不留，等有第二个来源再定。
+
+#### 踩坑：`<array>` 不带 `uint32_t`，`<vector>` 不带 `size_t`
+
+V0.1.2 引入 `EntityHandle{ uint32_t id; }` 后，MinGW 有 5 个 TU 编不过，MSVC 却编得过——因为 `<memory>` / `<iostream>` / `SFML/Graphics/RenderWindow.hpp` 恰好会带出 `uint32_t`，谁先 include 谁就活。
+判据：**头文件必须自足**；`.cpp` 靠传递可以接受。
+
+#### 踩坑：`class State` 装的是栈
+
+类名叫 `State`，内容是 `vector<unique_ptr<IGameState>>`，而"状态"的基类也叫 `IGameState`——文件和类、类与基类三方撞词。改名 `GameStateMachine` 后，文件、类、职责三者对齐。
+
+#### 改名对照（本文历史条目保持原名，不追改）
+
+| 旧 | 新 |
+|---|---|
+| `IInputLayer::MsgData` | `MsgData`（`input/msgData.h`） |
+| `IGameState::GameSta` + `kStateCount` | `GameStateKind` + `kStateCount`（`include/gameStateKind.h`） |
+| `ButtonID` | `ButtonKind`（`include/buttonKind.h`） |
+| `ButtonManager` | `ButtonStore`（`logic/button/`） |
+| `EntityManager` | `EntityStore`（`logic/entity/`） |
+| `class State` | `GameStateMachine` |
+| `include/type_render_data.h` | `logic/contract/renderData.h` |
+| `include/type_render_entity.h` | `logic/contract/renderDataPu.h` |
+| `include/context/stateContext.h` | `logic/contract/stateContext.h` |
+| `include/config_design_view.h` | `include/config/designView.h` |
+| `include/config_rect.h` | `include/config/buttonTableRect.h` |
+
 ### V0.1.2 — 种类 / 实例 ID 分离
 
 > 改了什么见 `VERSION.md` 与 commit；这里只记为什么。
@@ -143,7 +190,7 @@ PowerShell 里不需要 `/d`（本来就跨盘符）；路径有空格必须加�
 注册第二个同种实体时 `setoff[id] = i` 直接覆盖，前一个槽既不会被 `deleteEntitys` 回收、`kind` 也还是活的——
 **泄漏槽继续被渲染、被命中，但表里查不到它**。往卡牌推进时这一步必然要拆（同名牌多张）。
 
-结论：**标量与序列走 `PuGameData`（选中 / 悬停 / 拖拽锚点），实例本体留在 `EntityManager` 的槽里，两边用 handle 当桥。**
+结论：**标量与序列走 `PuGameData`（选中 / 悬停 / 拖拽锚点），实例本体留在 `EntityStore` 的槽里，两边用 handle 当桥。**
 
 #### 踩坑：`Entity temp = manager.getEntity(id)` 是拷贝
 
@@ -168,9 +215,9 @@ PowerShell 里不需要 `/d`（本来就跨盘符）；路径有空格必须加�
 #### 为什么放弃「实体进 GameData」的原计划
 
 V0.1.0.6 的设想是：实体搬进 `PuGameData`，渲染走 `collectView` + `View`。
-实际做成的是：实体留在 `EntityManager` 里，只把**持有者**从 `Logic` 换成状态自身。
+实际做成的是：实体留在 `EntityStore` 里，只把**持有者**从 `Logic` 换成状态自身。
 
-判据见方法论 3：`EntityManager` 现在有**真实职责**（槽位复用 `freeList_` + ID→下标 `setoff`），
+判据见方法论 3：`EntityStore` 现在有**真实职责**（槽位复用 `freeList_` + ID→下标 `setoff`），
 而原计划的三条理由（状态够不着 / 需维护注册三件套 / 生命周期不跟状态）在持有者改变后**全部消失**。
 
 **给未来的自己**：想拆它之前，先看它现在有没有职责。
@@ -296,7 +343,7 @@ V0.1.1 起按时间轴分家：
 #### 按钮版 v1（错的）
 
 `class Button` 持有 `isHovered / isPressed / hoverStartTime`，
-由状态的 `onEnter` 注册、`onExit` 销毁，配一个 `ButtonManager`。
+由状态的 `onEnter` 注册、`onExit` 销毁，配一个 `ButtonStore`。
 
 **结果：写不下去。** 三个症状：
 
@@ -305,7 +352,7 @@ V0.1.1 起按时间轴分家：
 - 状态自己维护按钮列表，和 `kButtonTable` 表重复硬编码
 
 **根因：** 把"每帧都变的派生数据"存进了"跨帧存活的对象"。
-生命周期不一致 → 必然需要一个协调者（`ButtonManager` 就是那个被迫诞生的角色）。
+生命周期不一致 → 必然需要一个协调者（`ButtonStore` 就是那个被迫诞生的角色）。
 
 #### 按钮版 v2（现行判断）
 
@@ -313,7 +360,7 @@ V0.1.1 起按时间轴分家：
 
 - 静态：`ButtonConfig{ area, ID }` 放 `kButtonTable`（表驱动，状态不持有）
 - 动态：`Button{ 悬停/点击/长按/长悬停 }` 每帧由输入统一算
-- 语义：按钮只产 `ButtonID`，**翻译成什么意图由状态决定**，按钮不知道游戏语义
+- 语义：按钮只产 `ButtonKind`，**翻译成什么意图由状态决定**，按钮不知道游戏语义
 
 **判断一条"该不该打包成 struct"的规则** → 升级为方法论 1。
 

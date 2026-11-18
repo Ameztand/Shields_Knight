@@ -5,7 +5,7 @@
 #include <SFML/Window/Event.hpp>
 #include <optional>
 
-#include "include/veiw/screen.h"
+#include "include/view/screen.h"
 
 
 class Window {

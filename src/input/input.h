@@ -1,6 +1,6 @@
 #pragma once  // 防止重复包含
 
-#include "include/veiw/screen.h"
+#include "include/view/screen.h"
 #include "input/msgData.h"
 
 #include <array>

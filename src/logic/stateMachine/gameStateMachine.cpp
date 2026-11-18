@@ -3,7 +3,7 @@
 #include "logic/stateMachine/gameState/gameState.h"
 #include "logic/stateMachine/gameState/puGameState.h"
 
-void State::pushSta(Data& data, std::unique_ptr<IGameState> newState) {
+void GameStateMachine::pushSta(Data& data, std::unique_ptr<IGameState> newState) {  
     if (newState) {
         if (!stack.empty()) stack.back()->onSuspend(data);//被压栈
         newState->onEnter(data);           // 入场调用 onEnter
@@ -11,7 +11,7 @@ void State::pushSta(Data& data, std::unique_ptr<IGameState> newState) {
     }
 }
 
-bool State::popSta(Data& data) {
+bool GameStateMachine::popSta(Data& data) {
     if (stack.empty()) {
         return true;//栈为空，无法弹出
     }
@@ -27,17 +27,17 @@ bool State::popSta(Data& data) {
     return true;
 }
 
-void State::replaceSta(Data& data, std::unique_ptr<IGameState> newState) {
+void GameStateMachine::replaceSta(Data& data, std::unique_ptr<IGameState> newState) {
     if (!newState) return;
     popSta(data);
     pushSta(data, std::move(newState));
 }
 
-IGameState* State::getState() {
+IGameState* GameStateMachine::getState() {
     return stack.empty() ? nullptr : stack.back().get();
 }
 
-const std::vector<GameStateKind> State::getStaStack() const
+const std::vector<GameStateKind> GameStateMachine::getStaStack() const
 {
     std::vector<GameStateKind> stackID;
     stackID.reserve(stack.size());
@@ -47,19 +47,19 @@ const std::vector<GameStateKind> State::getStaStack() const
     return stackID;
 }
 
-bool State::empty() const {
+bool GameStateMachine::empty() const {
     return stack.empty();
 }
 
-int State::getStaDepth() const {
+int GameStateMachine::getStaDepth() const {
     return (int)stack.size();
 }
 
-GameStateKind State::getStaID()const {
-    return (stack.empty()) ? GameStateKind::null : stack.back()->getID();
+GameStateKind GameStateMachine::getStaID()const {
+    return (stack.empty()) ? GameStateKind::Null : stack.back()->getID();
 }
 
-void State::initGameSta(Data& data)
+void GameStateMachine::initGameSta(Data& data)
 {
     while (!stack.empty()) {
         popSta(data);

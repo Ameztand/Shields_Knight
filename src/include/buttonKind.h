@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ButtonID {
+enum class ButtonKind {
     Null,
     NormalUIButton,
     Role,//角色(实际上，以后这里直接枚举所有角色id和技能id。。。吗？)

@@ -10,7 +10,7 @@
 
 
 // ========== 状态机管理器 ==========
-class State {
+class GameStateMachine {
 private:
     std::vector<std::unique_ptr<IGameState>> stack;
 
