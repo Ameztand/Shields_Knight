@@ -36,7 +36,7 @@
 | 未触发 | 支 | `Intend` 移出 `Data`（R3） | 出现「两个状态写同一意图但含义不同」 |
 | 未触发 | 支 | 能力门控表 + 仲裁管线 | 出现「同一对象在不同系统里被区别对待」 |
 | 未触发 | 支 | 按游戏模式拆 `GameData` + `src/logic/gameData/` | 第二个游戏模式出现 |
-| 未触发 | 支 | `submitRender` 参数由镜像改投影（只带 `pos` / `w` / `h` 一类） | `Entity` 长出 `hp` / `alive` / `animTime` 。`RenderData` 不再 include `logic/button/button.h` 那天；红线：`render.cpp:15` 那行 include 消失 |
+| 未触发 | 支 | `submitRender` 参数由镜像改投影（只带 `pos` / `w` / `h` 一类） | `Entity` 长出 `hp` / `alive` / `animTime` 。`RenderData` 不再 include `logic/button/button.h` 那天；红线：`render.cpp:15` 那行 include 消失；或：需要旋转 / 四角命中，几何必须进契约时 |
 | 未触发 | 支 | `registerEntitys(id)` → `spawn(EntityDef, Vec2 pos)` | 出现第二种单位 |
 | 未触发 | 支 | 设计分辨率收敛到单一来源 | 要改设计分辨率之前 |
 | 未触发 | 支 | 窗口缩放后鼠标命中的回归验证 | 有人报命中错位 |
@@ -44,6 +44,7 @@
 
 ## 清理候选（死代码）
 
+- [ ] `Rect::intersects` — `common.h`，无调用者（引入旋转后，AABB 相交会误导）
 - [ ] `Intend::replaceLobby` / `pushLobby` — `dataStore.h`，定义后无调用者
 - [ ] `Button::isLongPress` — `button.h`，声明后从不赋值
 - [ ] `PuGame::getEntitys()` — 无调用者（渲染走 `submitRender`）

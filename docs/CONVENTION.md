@@ -20,6 +20,8 @@
 - 判据：回退锚点。实测跑通主流程，且**相对上一个稳定版有净改善**（bug 更少 / 框架更顺）。不要求零缺陷。
 - **默认不声明稳定版。** 声明时：README 写一行「稳定版：`Vx`」，另打 `stable/<版本>` tag。README 没有这一行 = 当前没有稳定版。
 - **每版打 tag**（如 `V0.1.1`）；tag 记"当时这么声明过"，**不删**。
+- **`stable/` tag 必须与 README 同步**：只有 README 写下「稳定版：Vx」时才允许存在 `stable/Vx`；两者不一致时以 README 为准。
+- **唯一允许删 tag 的情形（自 V0.1.2.10）**：上一情形中那个与声明不符的 `stable/` tag 可以删除——优先**迁为常规版本 tag**，别让版本失去 tag；MUST 在 `VERSION.md` 记一行原因与被删 tag 的 sha。其余 tag 仍不删。
 - 可撤销：日后发现新问题，改 README 那一行指回更早的稳定版即可，tag 不删。
 - V0.1.1 之前 tag 不齐全；**不追认、不补打**。那段历史的回退锚点用 commit，见 `VERSION.md`。
 - 发版用 **annotated tag**；message 写 2~3 行 release note（这个版本的关键变化）。
@@ -73,7 +75,7 @@ V0.1.1 refactor(logic): 一句话主改动
 
 ```
 
-- subject：`<版本号> <类型>(<范围>): <一句话主改动>`；类型取 `feat` / `refactor` / `fix` / `wip`。
+- subject：`<版本号> <类型>(<范围>): <一句话主改动>`；类型取 `feat` / `refactor` / `fix` / `docs` / `chore` / `wip` 。
 - body：一眼看不出「为什么 / 边界」时才写；写细节与已知问题，一条一行，不重复 subject。
 
 ## 6 每次改动后的自测
