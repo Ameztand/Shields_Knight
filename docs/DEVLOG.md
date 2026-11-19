@@ -132,6 +132,18 @@ PowerShell 里不需要 `/d`（本来就跨盘符）；路径有空格必须加�
 
 > 倒序，最新在上。只记"为什么"；"改了什么"见 `VERSION.md` 与 git。
 
+### V0.1.3 — 美术资源从「运行前提」降级为「可选输入」
+
+**现象**：`render.cpp` 里 `loadFromFile` 写在按钮循环内、每帧执行；背景用 `static sf::Texture` + `loaded` 标志，失败后每帧重试并刷屏。
+
+**判断**：美术资源应当是可选输入，不是运行前提。缺图时按 `kind` 回退纯色，程序照常跑。
+
+**落地**：`AssetSpec{ path, policy, rgb, extraScale }` 进 `include/config/assetTable.h`（零依赖区，不许出现 `sf::Color`/`sf::Texture`，颜色只存 `0xRRGGBB`）；纹理与加载状态在 `render/assetCache.*`，只在 `onEnter` 加载一次，失败各报一次、**永不重试**；背景与按钮共用 `drawAsset` 一条路。
+
+**否决**：① 继续用 `static` 纹理——多状态无法各自加载，且失败会逐帧重试；② 把 `sf::Color` 写进 `include/`——破零依赖不变量；③ 保留 `if (kind == lobbystartButton)` 特例——kind 一多就退化成 switch 地狱。
+
+**边界**：`1.3f` 从代码挪进配置表（方法论 8）；但绘制区仍比命中区大 30%，这次没修，`PLAN.md` 里仍标着。
+
 ### V0.1.2.1–.9 — 结构重构：目录按「谁写它」重整
 
 > 改了什么见 `VERSION.md` 与 git；这里只记为什么。

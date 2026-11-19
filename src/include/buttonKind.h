@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>   // size_t
+
 enum class ButtonKind {
     Null,
     NormalUIButton,
@@ -13,5 +15,8 @@ enum class ButtonKind {
     pauseLeftButton,
     pauseMiddleButton,
     pauseRightButton,
-    puGameTestButton
+    puGameTestButton,
+    COUNT //哨兵
 };
+
+inline constexpr size_t kButtonKindCount = static_cast<size_t>(ButtonKind::COUNT);

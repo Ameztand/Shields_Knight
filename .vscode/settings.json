@@ -1,6 +1,7 @@
 {
     // VS Code 侧：锚定 mingw 预设，避免它跟随 VS 一起漂到 msvc
     "cmake.useCMakePresets": "always",
+    "search.exclude": { "build/**": true, ".vs/**": true, "docs/**": true }
     //"cmake.configurePreset": "mingw",
     //"cmake.buildPreset": "mingw"
 }

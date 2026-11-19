@@ -19,7 +19,7 @@ int main() {
     TimeClock clock;
     Logic logic;
 
-    render.onEnter();
+    //render.onEnter();
 
     bool close = false;//难道sysCommand是对的？
     while (window.isOpen()) {
