@@ -6,6 +6,8 @@
 
 //#include "common.h"
 #include "IGameState.h"
+//#include "logic/contract/stateContext.h"
+struct StateContext;
 
 
 
@@ -15,11 +17,11 @@ private:
     std::vector<std::unique_ptr<IGameState>> stack;
 
 public:
-    void pushSta(Data& data, std::unique_ptr<IGameState> newState);
+    void pushSta(StateContext& ctx, std::unique_ptr<IGameState> newState);
 
-    bool popSta(Data& data);
+    bool popSta(StateContext& ctx);
 
-    void replaceSta(Data& data, std::unique_ptr<IGameState> newState);
+    void replaceSta(StateContext& ctx, std::unique_ptr<IGameState> newState);
 
     IGameState* getState();//获取当前状态机
 
@@ -31,5 +33,5 @@ public:
 
     GameStateKind getStaID()const;
 
-    void initGameSta(Data& data);
+    void initGameSta(StateContext& ctx);
 };

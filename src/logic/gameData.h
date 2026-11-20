@@ -2,6 +2,32 @@
 
 #include <cstdint>
 #include "include/common.h"
+#include "input/msgData.h"//为了KeySta
+
+//虚拟按钮双缓存
+struct DoubleBool {
+
+	bool res = false;
+	bool prve = false;
+
+	void update(const KeySta out) {
+		bool purr = false;
+		if (out == KeySta::Falling) {
+			prve = !prve;
+			//printf("开\n");
+		}
+		if (out == KeySta::DownL) {
+			prve = false;
+			//printf("关\n");
+		}
+		if (out != KeySta::Null) {
+			purr = true;
+		}
+		res = (prve || purr);
+	}
+
+	const bool get() { return res; }
+};
 
 class PuGameData {
 private:
@@ -13,6 +39,13 @@ private:
 
 	//uint32_t selectedHoverID_ = 0;//悬停对象
 public:
+
+	//临时存放
+	//F1Debug
+	DoubleBool F1_ = {};
+	//Alt调试
+	DoubleBool Alt_ = {};
+
 	void setCnt(int i) { cnt_ = i; }
 	int getCnt() { return cnt_; }
 

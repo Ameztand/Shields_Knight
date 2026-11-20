@@ -3,34 +3,38 @@
 #include "logic/stateMachine/gameState/gameState.h"
 #include "logic/stateMachine/gameState/puGameState.h"
 
-void GameStateMachine::pushSta(Data& data, std::unique_ptr<IGameState> newState) {  
+#include "logic/intendEvent.h"
+#include "logic/button/button.h"
+#include "input/msgData.h"
+
+void GameStateMachine::pushSta(StateContext& ctx, std::unique_ptr<IGameState> newState) {
     if (newState) {
-        if (!stack.empty()) stack.back()->onSuspend(data);//被压栈
-        newState->onEnter(data);           // 入场调用 onEnter
+        if (!stack.empty()) stack.back()->onSuspend(ctx);//被压栈
+        newState->onEnter(ctx);           // 入场调用 onEnter
         stack.push_back(std::move(newState));
     }
 }
 
-bool GameStateMachine::popSta(Data& data) {
+bool GameStateMachine::popSta(StateContext& ctx) {
     if (stack.empty()) {
         return true;//栈为空，无法弹出
     }
 
-    stack.back()->onExit(data);          // 出场调用 onExit
+    stack.back()->onExit(ctx);          // 出场调用 onExit
     stack.pop_back();
 
     if (!stack.empty()) {
-        stack.back()->onResume(data);//不再压栈
+        stack.back()->onResume(ctx);//不再压栈
         return false;//栈不为空
     }
 
     return true;
 }
 
-void GameStateMachine::replaceSta(Data& data, std::unique_ptr<IGameState> newState) {
+void GameStateMachine::replaceSta(StateContext& ctx, std::unique_ptr<IGameState> newState) {
     if (!newState) return;
-    popSta(data);
-    pushSta(data, std::move(newState));
+    popSta(ctx);
+    pushSta(ctx, std::move(newState));
 }
 
 IGameState* GameStateMachine::getState() {
@@ -59,10 +63,10 @@ GameStateKind GameStateMachine::getStaID()const {
     return (stack.empty()) ? GameStateKind::Null : stack.back()->getID();
 }
 
-void GameStateMachine::initGameSta(Data& data)
+void GameStateMachine::initGameSta(StateContext& ctx)
 {
     while (!stack.empty()) {
-        popSta(data);
+        popSta(ctx);
     }
-    pushSta(data, std::make_unique<Lobby>());
+    pushSta(ctx, std::make_unique<Lobby>());
 }

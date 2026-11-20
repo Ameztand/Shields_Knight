@@ -65,6 +65,9 @@ src/
 │  ├─ buttonKind.h          按钮闭集 ID（配置表的键）
 │  ├─ gameStateKind.h       状态闭集 ID + kStateCount
 │  ├─ config/               编译期配置数据
+│  │  ├─ assetTable.h       AssetSpec + kAssetTable + 两张背景（path=nullptr → 纯色）
+│  │  ├─ colorTable.h       ColorKey → 0xRRGGBB（render 层再转 sf::Color）
+│  │  ├─ designView.h       世界分辨率 1920×1080
 │  │  ├─ buttonTable.h      ButtonConfig + kButtonTable（状态 → 按钮表）
 │  │  ├─ buttonTableRect.h  各按钮的区域
 │  │  └─ designView.h       世界分辨率 1920×1080
@@ -72,26 +75,30 @@ src/
 │  │  ├─ screen.h           Screen：缩放、黑边、toDesign
 │  │  └─ fit.h              缩放策略 Cover / Contain / Stretch
 │  └─ utils/
-│     └─ time_clock.h       steady_clock 毫秒时间源
+│     └─ time_clock.h       每帧 dt（秒，钳制 0.1s）：帧循环唯一的时间来源
 ├─ input/                   输入层
 │  ├─ msgData.h             KeySta / MsgData / held()：纯数据，不含 SFML
 │  └─ input.h|cpp           Input：五态判定 + 鼠标坐标映射
 ├─ platform/                窗口层
 │  └─ camera.h|cpp          class Window（文件名待改 window.*；Win32 侧禁输入法）
 ├─ render/                  渲染层：只读 RenderData
-│  └─ render.h|cpp          View/letterbox、背景、按钮、实体框
+│  ├─ render.h|cpp          View/letterbox、背景、按钮、实体框
+│  └─ assetCache.h|cpp      纹理只加载一次，缺图按 kind 回退纯色
 └─ logic/                   逻辑层
    ├─ logic.h|cpp           调度：输入 → 按钮 → 状态机 → 意图结算 → 提交快照
-   ├─ dataStore.h           黑板：时间戳与 dt / 消息 / 按钮快照 / 意图
+   ├─ intendEvent.h         Intend（意图闭集）+ clearIntend
    ├─ gameData.h            PuGameData：单个游戏模式的游戏数据
    ├─ button/               Button（运行期态）+ ButtonStore（表驱动派生）
    ├─ entity/               Entity（POD）+ EntityStore（槽位复用，由状态持有）
    ├─ stateMachine/         GameStateMachine（push/pop/replace）+ IGameState
    │  └─ gameState/         Lobby / Select / Pause / PuGame
+   │     └─ puGameStateLogic/
+   │        └─ battle.h|cpp 战斗规则：选中 / 拖动 / 悬停（阶段机待接）
    └─ contract/             快照与帧上下文——render 唯一可见的 logic 目录
       ├─ renderData.h       RenderData（一帧渲染快照）
-      ├─ renderDataPu.h     RenderDataEntity（实体快照）
-      └─ stateContext.h     StateContext（帧中段上下文）
+      ├─ renderDataPu.h     RenderDataPu（实体快照）
+      ├─ stateContext.h     StateContext（帧中段：意图 / dt / 输入 / 按钮）
+      └─ battleContext.h    BattleContext（世界视图：PuGameData + EntityStore）
 ```
 
 ---

@@ -126,11 +126,49 @@ VS 新建文件默认用系统 ANSI（GBK），要另存为 UTF-8。项目根 `.
 PowerShell 的 `cd` 是 `Set-Location` 别名，没有 `/d` 参数 → `/d` 被当位置参数 → 报错。
 PowerShell 里不需要 `/d`（本来就跨盘符）；路径有空格必须加引号。
 
+### 移动项目目录后 `cmake --build` 报 CMakeCache / VerifyGlobs
+
+**现象**：把整个项目文件夹改名或搬走（`build/` 跟着走）后：
+
+```text
+CMake Error: The current CMakeCache.txt directory .../test/.../build/mingw/CMakeCache.txt
+is different than the directory .../新建文件夹/.../build/mingw where CMakeCache.txt was created
+CMake Error: Not a file: .../build/mingw/CMakeFiles/VerifyGlobs.cmake
+```
+
+第二行的路径常显示成 `鏂板缓鏂囦欢澶筡…`：那是 UTF-8 的「新建文件夹\」被按 GBK 显示，`\`(0x5C) 被当作 GBK 尾字节吃掉了。**乱码只是显示，不是病因。**
+
+**根因**：`build/` 里的 `CMakeCache.txt`、`Makefile`、`Makefile.cmake`、`VerifyGlobs.cmake`、`build.make` 全是绝对路径（本项目有 120 处源文件路径）。移动目录 = 缓存指向一个已不存在的位置；CMake 检测到不一致会硬报错退出，**不会自愈**。
+
+**处置**：`cmake --fresh --preset mingw`（≥3.24），或删掉 `build/` 后重新 configure，再 `cmake --build --preset mingw`。只跑 `cmake --preset` 遇到过期缓存不会重建，必须先删或先 `--fresh`。
+
+**判据**：`CMakeCache.txt` 里的 `CMAKE_HOME_DIRECTORY` 必须等于当前源码路径，不等于就说明这棵树是别处的。
+
+**推论**：`build/` 永远不入库——入了 git，每个克隆者都会中同一招，报错里还会出现别人机器上的路径。`.gitignore` 里那条 `build/` 是对的。
+
 ---
 
 ## 版本手记
 
 > 倒序，最新在上。只记"为什么"；"改了什么"见 `VERSION.md` 与 git。
+
+### V0.1.4 — `Data` 退场：意图出黑板、帧上下文收口、dt 回到帧循环
+
+**现象**：`Data` 一个类同时装着四样东西——时间戳与 dt、本帧输入、意图（`gameIntend`）、按钮快照（`buttons_`）。状态只要拿到 `Data&` 就能顺手读时间、读输入、写意图、读按钮；四个生命周期入口那条"只该碰世界状态"的纪律纯靠自觉。同一类问题还有第二处：`buttonStore.cpp` 用绝对差、`entityStore.cpp` 用 `+= dt` 算悬停，暂停期间按钮的长悬停仍会触发。
+
+**判断**：`Data` 里没有"数据"，只有三件**机制**：一个时钟、一份本帧输入快照、一组被下游读的派生量。写者和生命周期都不同，按方法论 1 该拆。而且"一帧的上下文"应该是一个**每帧新建的值**，不是跨帧存活的唯一实例——后者一定会被当黑板用。
+
+**落地**：
+- `logic/intendEvent.h`：`Intend` 独立，归 `Logic` 持有；状态只拿 `Intend&`，写意图不必再绕黑板。
+- `logic/contract/stateContext.h`：`StateContext{ Intend&, const double dt, const MsgData&, const std::vector<Button>& }`，四个字段来自四个所有者，**装配点只有一个**（`Logic::tick`）。
+- `IGameState` 四事件 + `tick` 全改吃 `StateContext&`：状态再也拿不到 `getNow()` / `getDeltaSec()` / `pushMsgData()`，"签名即权限"从注释变成类型。
+- `include/utils/time_clock.h`：`tick()` 产出**秒**（`*0.001`）+ 钳制 0.1s + 负值保护，`now()` 一帧只取一次；main 变成 `const double dt = clock.tick();`。
+- `PuGame::tick` 里的选中 / 拖动 / 悬停整块搬进 `puGameStateLogic/battle.{h,cpp}`，签名为 `Battle::tick(StateContext&, BattleContext&)`；`PuGame` 从 233 行降到约 96 行。
+- `logic/dataStore.h` 删除。
+
+**否决**：① 让 `Data` 改名 `WorldCache` 并负责搭 `ctx`——`StateContext` 的四个字段来自四个所有者（`Logic` / 时钟 / 输入 / `ButtonStore`），谁搭它就得认识这四家，等于把刚拆的 hub 换个名字装回去；② dt 留在 `Data` 里由 `Logic` 更新——那样 `ButtonStore` 必须继续认识黑板，"dt 由帧循环算一次"（方法论 10）就还是注释；③ 只动 `StateContext` 不动时钟——`TimeClock::now()` 与 `Data::updataNow()` 本来就是同一个时钟的两半。
+
+**边界**：这次唯一被踩出来的坑是单位——`TimeClock::tick()` 第一版漏了 `*0.001`，一帧后的 `hoverTime` 就超过 1.0 秒阈值，两级悬停塌成一级；已补换算、钳制与负值保护，但 `reset()` 仍未复位 `lastNow_`（靠负值保护兜住，重置后损失一帧）。`RenderData` 里仍是 `Button` / `Entity` 本体，镜像是下次的事。
 
 ### V0.1.3 — 美术资源从「运行前提」降级为「可选输入」
 

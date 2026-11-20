@@ -16,5 +16,5 @@ struct RenderData{
 
     bool debugPanel_ = false;
 
-    std::array<RenderDataEntity, kStateCount> entitys_;//全部实体
+    std::array<RenderDataPu, kStateCount> entitys_;//全部实体
 };

@@ -5,18 +5,19 @@
 
 #include "input/msgData.h"
 #include "logic/contract/renderData.h"
-#include "logic/dataStore.h"
 #include "logic/stateMachine/gameStateMachine.h"
-#include "logic/button/ButtonStore.h"
+#include "logic/button/buttonStore.h"
+#include "logic/intendEvent.h"
 
 
 
 class Logic {
 private:
-	Data data;
+	Intend intend;
 	ButtonStore buttons;
 	GameStateMachine stateStack;
 	
+	MsgData cacheMsgData;//在这里处理alt/F1等数据？
 
 	RenderData renderData;
 
@@ -27,16 +28,14 @@ private:
 	void regCurButtons();
 	//void delCurEntitys();
 	//void regCurEntitys();
-	void replaceSta(std::unique_ptr<IGameState> sta);
-	void pushSta(std::unique_ptr<IGameState> sta);
-	void popSta();
-	void changeSta();
-	
-	void clearIntend();
+	void replaceSta(StateContext& ctx, std::unique_ptr<IGameState> sta);
+	void pushSta(StateContext& ctx, std::unique_ptr<IGameState> sta);
+	void popSta(StateContext& ctx);
+	void changeSta(StateContext& ctx);
 public:
 	Logic() { onEnter(); }//包含入场onEnter
 
-	void tick(const MsgData& out, const double now);
+	void tick(const MsgData& out, const float dt);
 
 	void updateRenderData();
 	RenderData commitRenderData();//不要加const，为什么？

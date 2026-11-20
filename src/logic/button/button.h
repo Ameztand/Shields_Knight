@@ -15,8 +15,8 @@ struct Button{
     bool isLongPress = false;//长按
     bool isLongHover = false;//长悬停
 
-    double hoverThreshold = 200; // 长悬停时间阈值（毫秒）
-    double hoverStartTime = 0; // 悬停时间（毫秒）
+    float hoverThreshold = 0.2f; // 长悬停时间阈值（秒）
+    float hoverTime = 0; // 悬停时间（秒）
 
     // 保留默认构造（以防别的地方要空构造）
     Button() = default;

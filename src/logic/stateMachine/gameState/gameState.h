@@ -13,12 +13,12 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& world)override;
-    void onExit(Data& world) override;
-    void onSuspend(Data& world) override;
-    void onResume(Data& world) override;
+    void onEnter(StateContext& ctx)override;
+    void onExit(StateContext& ctx) override;
+    void onSuspend(StateContext& ctx) override;
+    void onResume(StateContext& ctx) override;
     void tick(StateContext& ctx)override;
-    void submitRender(RenderDataEntity& out) override;
+    void submitRender(RenderDataPu& out) override;
     GameStateKind getID() const override;
 };
 
@@ -29,12 +29,12 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& world)override;
-    void onExit(Data& world) override;
-    void onSuspend(Data& world) override;
-    void onResume(Data& world) override;
+    void onEnter(StateContext& ctx)override;
+    void onExit(StateContext& ctx) override;
+    void onSuspend(StateContext& ctx) override;
+    void onResume(StateContext& ctx) override;
     void tick(StateContext& ctx)override;
-    void submitRender(RenderDataEntity& out) override;
+    void submitRender(RenderDataPu& out) override;
     GameStateKind getID() const override;
 };
 
@@ -45,12 +45,12 @@ private:
     //ButtonPtr buttons;
 
 public:
-    void onEnter(Data& world)override;
-    void onExit(Data& world) override;
-    void onSuspend(Data& world) override;
-    void onResume(Data& world) override;
+    void onEnter(StateContext& ctx)override;
+    void onExit(StateContext& ctx) override;
+    void onSuspend(StateContext& ctx) override;
+    void onResume(StateContext& ctx) override;
     void tick(StateContext& ctx)override;
-    void submitRender(RenderDataEntity& out) override;
+    void submitRender(RenderDataPu& out) override;
     GameStateKind getID() const override;
 };
 

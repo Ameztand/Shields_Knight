@@ -20,7 +20,7 @@ inline constexpr std::array<AssetSpec, kButtonKindCount> kAssetTable {{
     // Null, NormalUIButton, Role, Skill, BUFF → 全部留空走默认
     {}, {}, {}, {}, {},
     // lobbystartButton
-    { "./pic/LobbyStartButton.png", FitPolicy::Contain, colorOf(ColorKey::Green), 1.3f },
+    { "./pic/LobbyStartButton.png", FitPolicy::Contain, colorOf(ColorKey::Green), 1.3f },//1.3仅图像放大
     // 其余未配置 → 默认空（path=nullptr，画纯色）
     {}, {}, {}, {}, {}, {}, {},
 }};

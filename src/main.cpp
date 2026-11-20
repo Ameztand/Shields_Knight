@@ -19,8 +19,6 @@ int main() {
     TimeClock clock;
     Logic logic;
 
-    //render.onEnter();
-
     bool close = false;//难道sysCommand是对的？
     while (window.isOpen()) {
         //分发输入事件
@@ -40,7 +38,8 @@ int main() {
         }
         //if (logic.resetTime())clock.reset();
 
-        logic.tick(msgData, clock.now());
+        const float dt = clock.tick();
+        logic.tick(msgData, dt);
         render.render(window.target(), window.screen(), logic.commitRenderData());
     }
 

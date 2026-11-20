@@ -9,7 +9,6 @@
 
 #include "input/msgData.h"
 #include "logic/button/button.h"
-#include "logic/dataStore.h"
 #include "logic/contract/renderData.h"
 
 
@@ -27,7 +26,7 @@ public:
 
     const std::array<std::vector<Button>, kStateCount>& commitButtons();
 
-    void tick(Data& data, const GameStateKind nowSta);
+    void tick(const GameStateKind nowSta, const MsgData& msgData, const float dt);
 
     void initButtonStore();
 };

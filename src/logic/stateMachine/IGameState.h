@@ -1,14 +1,11 @@
 #pragma once
 
-#include <cstddef>   // ← 新增，size_t
-
 #include "include/gameStateKind.h"
-#include "logic/contract/renderDataPu.h"
-#include "logic/contract/stateContext.h"//临时引用
+//#include "logic/contract/renderDataPu.h"
+//#include "logic/contract/stateContext.h"//临时引用
 
-
-
-class Data;
+struct RenderDataPu;
+struct StateContext;
 
 //========== 状态机 ==========
 class IGameState {
@@ -23,11 +20,11 @@ public:
     //
     // R0 阶段这条只是约定；R3（Intend 移出 Data）和 R5（Data 变成 GameData）
     // 之后由类型强制。
-    virtual void onEnter(Data& world) = 0;
-    virtual void onExit(Data& world) = 0;
-    virtual void onSuspend(Data& world) = 0;
-    virtual void onResume(Data& world) = 0;
+    virtual void onEnter(StateContext& ctx) = 0;
+    virtual void onExit(StateContext& ctx) = 0;
+    virtual void onSuspend(StateContext& ctx) = 0;
+    virtual void onResume(StateContext& ctx) = 0;
     virtual void tick(StateContext& ctx) = 0;
-    virtual void submitRender(RenderDataEntity& out) = 0;
+    virtual void submitRender(RenderDataPu& out) = 0;
     virtual GameStateKind getID() const = 0;
 };

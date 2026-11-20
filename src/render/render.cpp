@@ -46,6 +46,7 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
 {
     for(const auto& sta : renderData.gameSta_)
     {
+        //渲染按钮
         const size_t staID = static_cast<size_t>(sta);
         for (const auto& btn : renderData.buttons_[staID])
         {
@@ -67,6 +68,7 @@ void Renderer::renderButton(sf::RenderWindow& window, const RenderData& renderDa
             //长悬停背景
             if (ety.isLongHover)
             {
+                //放大做临时检测长悬停效果
                 sf::RectangleShape shape2({ (float)(ety.w * 1.25), (float)(ety.h * 1.25) });//硬凑，不用fit.h?
                 shape2.setPosition({ (float)(ety.left() - ety.w * 0.125), (float)(ety.top() - ety.h * 0.125) });   // 中心 → 左上角
                 shape2.setFillColor(sf::Color::Red);

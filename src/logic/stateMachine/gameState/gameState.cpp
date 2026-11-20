@@ -1,50 +1,52 @@
 #include "gameState.h"
 
 #include "include/buttonKind.h"
-#include "logic/dataStore.h"
+#include "input/msgData.h"
 #include "logic/button/button.h"
+#include "logic/intendEvent.h"
+#include "logic/contract/stateContext.h"
 
 
 
 namespace HandleInput{
-    bool EscPop(Data& world, const MsgData& msgData)
+    bool EscPop(StateContext& ctx)
     {
-        bool temp = (msgData.Esc == KeySta::Falling);
-        world.gameIntend.popSta = temp;
+        bool temp = (ctx.msgData.Esc == KeySta::Falling);
+        ctx.intend.popSta = temp;
         return temp;
     }
 
-    bool EscPuase(Data& world, const MsgData& msgData)
+    bool EscPuase(StateContext& ctx)
     {
-        bool temp = (msgData.Esc == KeySta::Falling);
-        world.gameIntend.pushPause = temp;
+        bool temp = (ctx.msgData.Esc == KeySta::Falling);
+        ctx.intend.pushPause = temp;
         return temp;
     }
 }
 
-void Lobby::onEnter(Data& world)
+void Lobby::onEnter(StateContext& ctx)
 {
-    world.gameIntend.resetTime = true;
+    ctx.intend.resetTime = true;
 }
 
-void Lobby::onExit(Data& world)
+void Lobby::onExit(StateContext& ctx)
 {
     
 }
 
-void Lobby::onSuspend(Data& world)
+void Lobby::onSuspend(StateContext& ctx)
 {
 
 }
 
-void Lobby::onResume(Data& world)
+void Lobby::onResume(StateContext& ctx)
 {
 }
 
 void Lobby::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(ctx.world, ctx.msgData))return;
+    if (HandleInput::EscPop(ctx))return;
 
     //轮询判断
     for (const auto& btn : ctx.buttonList ) {
@@ -53,14 +55,14 @@ void Lobby::tick(StateContext& ctx)
         switch (btn.status.kind) {
             case ButtonKind::lobbystartButton:
                 //选择难度
-                ctx.world.gameIntend.replaceSelect = true;
+                ctx.intend.replaceSelect = true;
                 break;
             default: break;
         }
     }
 }
 
-void Lobby::submitRender(RenderDataEntity& out)
+void Lobby::submitRender(RenderDataPu& out)
 {
 }
 
@@ -69,7 +71,7 @@ GameStateKind Lobby::getID() const
     return ID;
 }
 
-void Select::onEnter(Data& data)
+void Select::onEnter(StateContext& ctx)
 {
     //buttons.clear();
     //buttons.emplace_back(selectLeftButton, ButtonKind::selectLeftButton);
@@ -77,39 +79,39 @@ void Select::onEnter(Data& data)
     //buttons.emplace_back(selectRightButton, ButtonKind::selectRightButton);
 }
 
-void Select::onExit(Data& data)
+void Select::onExit(StateContext& ctx)
 {
     //ctx.renderData.isSelect = false;
 }
 
-void Select::onSuspend(Data& world)
+void Select::onSuspend(StateContext& ctx)
 {
 }
 
-void Select::onResume(Data& world)
+void Select::onResume(StateContext& ctx)
 {
 }
 
 void Select::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(ctx.world, ctx.msgData))return;
+    if (HandleInput::EscPop(ctx))return;
 
     //轮询判断
-    for (const auto& btn : ctx.world.getButtonOf(getID())) {
+    for (const auto& btn : ctx.buttonList) {
         if (!btn.isClicked) continue;
 
         switch (btn.status.kind) {
             case ButtonKind::selectRightButton:
                 //进入PU
-                ctx.world.gameIntend.replacePuGame = true;
+                ctx.intend.replacePuGame = true;
                 break;
             default: break;
         }
     }
 }
 
-void Select::submitRender(RenderDataEntity& out)
+void Select::submitRender(RenderDataPu& out)
 {
 }
 
@@ -118,7 +120,7 @@ GameStateKind Select::getID() const
     return ID;
 }
 
-void Pause::onEnter(Data& data)
+void Pause::onEnter(StateContext& ctx)
 {
     //buttons.clear();
     //buttons.emplace_back(pauseLeftButton, ButtonKind::pauseLeftButton);
@@ -126,48 +128,48 @@ void Pause::onEnter(Data& data)
     //buttons.emplace_back(pauseRightButton, ButtonKind::pauseRightButton);
 }
 
-void Pause::onExit(Data& data)
+void Pause::onExit(StateContext& ctx)
 {
 }
 
-void Pause::onSuspend(Data& world)
+void Pause::onSuspend(StateContext& ctx)
 {
 }
 
-void Pause::onResume(Data& world)
+void Pause::onResume(StateContext& ctx)
 {
 }
 
 void Pause::tick(StateContext& ctx)
 {
     //退出
-    if (HandleInput::EscPop(ctx.world, ctx.msgData))return;
+    if (HandleInput::EscPop(ctx))return;
 
     //轮询判断
-    for (const auto& btn : ctx.world.getButtonOf(getID())) {
+    for (const auto& btn : ctx.buttonList) {
         if (!btn.isClicked) continue;
 
         switch (btn.status.kind) {
             case ButtonKind::pauseLeftButton:
                 //继续游戏
-                ctx.world.gameIntend.popSta = true;
+                ctx.intend.popSta = true;
                 break;
 
             case ButtonKind::pauseMiddleButton:
                 //重新开始
-                ctx.world.gameIntend.restartPuGame = true;
+                ctx.intend.restartPuGame = true;
                 break;
 
             case ButtonKind::pauseRightButton:
                 //返回大厅
-                ctx.world.gameIntend.backLobby = true;
+                ctx.intend.backLobby = true;
                 break;  
             default: break;
         }
     }
 }
 
-void Pause::submitRender(RenderDataEntity& out)
+void Pause::submitRender(RenderDataPu& out)
 {
 }
 
